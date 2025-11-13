@@ -2,8 +2,9 @@
 
 @section('title', 'Create Lembaga Desa')
 
+
 @section('content_header')
-    <h1>Create Lembaga Desa</h1>
+    <h1>Lembaga Desa</h1>
 @stop
 
 @section('content')

@@ -51,7 +51,7 @@ class LembagaDesaController extends Controller
 
         $lembaga->update($data);
 
-        return redirect()->route('lembaga.index')->with('success', 'LembagaDesa updated.');
+        return redirect()->route('lembaga.index')->with('success', 'Lembaga Desa Berhasil ditambahkan.');
     }
 
     public function destroy(LembagaDesa $lembaga) // UBAH: $lembagaDesa → $lembaga
