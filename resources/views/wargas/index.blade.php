@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1 class="h3 mb-0 text-gray-800">Data Warga</h1>
+        <h1 class="m-0 text-dark">Data Warga</h1>
         <a href="{{ route('wargas.create') }}" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i>Tambah Warga
         </a>
@@ -13,47 +13,55 @@
 
 @section('content')
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="alert">×</button>
         </div>
     @endif
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-white py-3">
-            <h5 class="card-title mb-0 text-dark">Daftar Warga</h5>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Daftar Warga</h3>
         </div>
-        <div class="card-body p-0">
+        <div class="card-body">
             <div class="table-responsive">
-                <table id="wargaTable" class="table table-hover table-striped mb-0">
-                    <thead class="table-light">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="bg-lightblue">
                         <tr>
-                            <th width="80" class="text-center">ID</th>
-                            <th width="150">No KTP</th>
-                            <th width="200">Nama Lengkap</th> {{-- ← LEBARKAN KOLOM NAMA --}}
-                            <th width="120" class="text-center">Jenis Kelamin</th>
-                            <th width="120">Agama</th>
-                            <th width="150">Pekerjaan</th> {{-- ← SESUAIKAN LEBAR PEKERJAAN --}}
-                            <th width="180">Email</th> {{-- ← SESUAIKAN LEBAR EMAIL --}}
-                            <th width="180" class="text-center">Aksi</th> {{-- ← SESUAIKAN LEBAR AKSI --}}
+                            <th width="5%">ID</th>
+                            <th width="12%">No KTP</th>
+                            <th width="20%">Nama Lengkap</th>
+                            <th width="10%" class="text-center">Jenis Kelamin</th>
+                            <th width="10%">Agama</th>
+                            <th width="15%">Pekerjaan</th>
+                            <th width="18%">Email</th>
+                            <th width="10%" class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                     @forelse($wargas as $item)
                         <tr>
                             <td class="text-center fw-bold">{{ $item->warga_id }}</td>
-                            <td>{{ $item->no_ktp }}</td>
-                            <td class="fw-semibold text-wrap">{{ $item->nama }}</td> {{-- ← TEXT-WRAP UNTUK NAMA PANJANG --}}
+                            <td style="max-width: 150px; word-wrap: break-word;">
+                                {{ $item->no_ktp }}
+                            </td>
+                            <td style="max-width: 250px; word-wrap: break-word;">
+                                {{ $item->nama }}
+                            </td>
                             <td class="text-center">
                                 @if($item->jenis_kelamin == 'L')
-                                    <span class="badge bg-primary">Laki-laki</span>
+                                    <span class="badge badge-primary">Laki-laki</span>
                                 @else
-                                    <span class="badge bg-pink">Perempuan</span>
+                                    <span class="badge badge-pink">Perempuan</span>
                                 @endif
                             </td>
-                            <td>{{ $item->agama }}</td>
-                            <td class="text-wrap">{{ $item->pekerjaan }}</td> {{-- ← TEXT-WRAP UNTUK PEKERJAAN PANJANG --}}
-                            <td class="text-wrap">
+                            <td style="max-width: 120px; word-wrap: break-word;">
+                                {{ $item->agama }}
+                            </td>
+                            <td style="max-width: 200px; word-wrap: break-word;">
+                                {{ $item->pekerjaan }}
+                            </td>
+                            <td style="max-width: 220px; word-wrap: break-word;">
                                 @if($item->email)
                                     <small>{{ $item->email }}</small>
                                 @else
@@ -61,29 +69,30 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route('wargas.show', $item) }}" class="btn btn-sm btn-info" title="Detail">
-                                        <i class="fas fa-eye me-1"></i>
-                                    </a>
-                                    <a href="{{ route('wargas.edit', $item) }}" class="btn btn-sm btn-warning" title="Edit">
-                                        <i class="fas fa-edit me-1"></i>
-                                    </a>
-                                    <form action="{{ route('wargas.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data warga ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger" title="Hapus">
-                                            <i class="fas fa-trash me-1"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                <a href="{{ route('wargas.show', $item) }}" 
+                                   class="btn btn-info btn-sm" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('wargas.edit', $item) }}" 
+                                   class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('wargas.destroy', $item) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                            onclick="return confirm('Yakin ingin menghapus data warga ini?')"
+                                            title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">
-                                <div class="text-muted">
-                                    Belum ada data warga
-                                </div>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="fas fa-users fa-2x mb-2"></i><br>
+                                Tidak ada data warga
                             </td>
                         </tr>
                     @endforelse
@@ -91,79 +100,204 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted small">
-                    Menampilkan {{ $wargas->firstItem() ?? 0 }} - {{ $wargas->lastItem() ?? 0 }} dari {{ $wargas->total() }} data
-                </div>
-                {{ $wargas->links() }}
-            </div>
+        @if($wargas->hasPages())
+        <div class="card-footer">
+            {{ $wargas->links() }}
         </div>
+        @endif
     </div>
 @stop
 
 @section('css')
     <style>
-        .card {
-            border-radius: 8px;
-        }
-        .table th {
-            border-top: none;
+        .bg-lightblue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
             font-weight: 600;
-            font-size: 0.85rem;
-            background-color: #f8f9fa;
         }
-        .badge.bg-pink {
-            background-color: #e83e8c !important;
+        
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .badge {
+            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            border: none;
+            padding: 15px 12px;
+            font-size: 14px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .table td {
+            border: none;
+            padding: 12px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f1f1;
+            text-align: center;
+        }
+        
+        .table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Badge Colors */
+        .badge-primary {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+        
+        .badge-pink {
+            background: linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%);
+        }
+        
+        /* Button Styles */
+        .btn-sm {
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin: 2px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .btn-info:hover, .btn-warning:hover, .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Tambah Warga Button */
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        }
+        
+        /* Header Card */
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+            border-bottom: none;
+            padding: 15px 20px;
+        }
+        
+        .card-title {
+            margin: 0;
+            font-weight: 600;
             color: white;
         }
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            text-decoration: none;
-            border: 1px solid transparent;
-        }
-        .table-hover tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-        .pagination .page-link {
-            border-radius: 4px;
-            margin: 0 2px;
-        }
-        .alert {
-            border-radius: 6px;
+
+        /* Card styling */
+        .card {
             border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
-        .text-wrap {
-            word-wrap: break-word;
-            max-width: 200px; /* Batas maksimal lebar untuk nama */
+        
+        /* Alert Success */
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: none;
+            border-left: 4px solid #28a745;
+            border-radius: 8px;
+            color: #155724;
         }
-        .d-flex.gap-1 .btn-sm {
-            margin: 0 2px;
+        
+        /* Empty State */
+        .text-muted {
+            color: #6c757d !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .table td, .table th {
+                padding: 8px 6px;
+                font-size: 13px;
+            }
+            
+            .btn-sm {
+                padding: 4px 8px;
+                margin: 1px;
+            }
+            
+            .badge {
+                font-size: 0.7em;
+                padding: 4px 8px;
+            }
+        }
+        
+        /* Text alignment for specific columns */
+        .table td:first-child,
+        .table th:first-child {
+            text-align: center;
+        }
+        
+        .table td:nth-child(2),
+        .table td:nth-child(3),
+        .table td:nth-child(5),
+        .table td:nth-child(6),
+        .table td:nth-child(7) {
+            text-align: left;
+        }
+        
+        /* Content Header */
+        .content-header h1 {
+            font-weight: 700;
+            color: #2d3748;
         }
     </style>
 @stop
 
 @section('js')
     <script>
-        $(document).ready(function () {
-            $('#wargaTable').DataTable({
-                "paging": false,
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "ordering": true,
-                "info": false,
-                "searching": true,
-                "language": {
-                    "search": "Cari:",
-                    "zeroRecords": "Tidak ada data yang ditemukan",
-                    "emptyTable": "Tidak ada data warga"
-                }
+        $(document).ready(function() {
+            // Add smooth loading for forms
+            $('form').on('submit', function() {
+                $(this).find('button[type="submit"]').html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
             });
         });
     </script>

@@ -323,6 +323,12 @@ return [
             'icon'   => 'fas fa-building',
             'active' => ['lembaga*'],
         ],
+         [
+            'text' => 'Jabatan', // TAMBAH INI
+            'url'  => '/jabatan',
+            'icon' => 'fas fa-fw fa-user-tie',
+            'active' => ['jabatan*'],
+        ],
 
         // HEADER UNTUK PENGATURAN
         ['header' => 'PENGATURAN'],

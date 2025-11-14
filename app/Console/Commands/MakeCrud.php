@@ -11,9 +11,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class MakeCatalyte extends Command
+class MakeCrud extends Command
 {
-    protected $signature = 'make:catalyte {name} {--fields=} {--pk=id}';
+    protected $signature = 'make:crud {name} {--fields=} {--pk=id}';
     protected $description = 'Generate complete CRUD system with migrations, models, controllers, and views';
 
     // Process additional parameters

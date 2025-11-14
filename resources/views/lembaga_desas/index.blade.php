@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1 class="h3 mb-0">Lembaga Desa</h1>
+        <h1 class="m-0 text-dark">Lembaga Desa</h1>
         <a href="{{ route('lembaga.create') }}" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i>Tambah Lembaga
         </a>
@@ -20,46 +20,58 @@
     @endif
 
     <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Daftar Lembaga Desa</h3>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="lembagaTable" class="table table-hover">
-                    <thead class="table-light">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="bg-lightblue">
                         <tr>
-                            <th width="80">ID</th>
-                            <th>Nama Lembaga</th>
-                            <th>Deskripsi</th>
-                            <th>Kontak</th>
-                            <th width="140" class="text-center">Aksi</th>
+                            <th width="5%">ID</th>
+                            <th width="25%">Nama Lembaga</th>
+                            <th width="35%">Deskripsi</th>
+                            <th width="15%">Kontak</th>
+                            <th width="20%" class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                     @forelse($lembaga_desas as $item)
                         <tr>
-                            <td class="fw-bold">{{ $item->lembaga_id }}</td>
-                            <td class="fw-semibold">{{ $item->nama_lembaga }}</td>
-                            <td>{{ Str::limit($item->deskripsi, 50) }}</td>
-                            <td>{{ $item->kontak ?: '-' }}</td>
+                            <td class="text-center fw-bold">{{ $item->lembaga_id }}</td>
+                            <td style="max-width: 250px; word-wrap: break-word;">
+                                {{ $item->nama_lembaga }}
+                            </td>
+                            <td style="max-width: 350px; word-wrap: break-word;">
+                                {{ $item->deskripsi ? Str::limit($item->deskripsi, 80) : '-' }}
+                            </td>
+                            <td style="max-width: 150px; word-wrap: break-word;">
+                                {{ $item->kontak ?: '-' }}
+                            </td>
                             <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('lembaga.show', $item) }}" class="btn btn-info" title="Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('lembaga.edit', $item) }}" class="btn btn-warning" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('lembaga.destroy', $item) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                <a href="{{ route('lembaga.show', $item) }}" 
+                                   class="btn btn-info btn-sm" title="Detail">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('lembaga.edit', $item) }}" 
+                                   class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('lembaga.destroy', $item) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                            onclick="return confirm('Yakin ingin menghapus lembaga ini?')"
+                                            title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-building fa-2x mb-2"></i><br>
                                 Tidak ada data lembaga
                             </td>
                         </tr>
@@ -68,42 +80,171 @@
                 </table>
             </div>
         </div>
+        @if($lembaga_desas->hasPages())
         <div class="card-footer">
             {{ $lembaga_desas->links() }}
         </div>
+        @endif
     </div>
 @stop
 
 @section('css')
     <style>
-        .card {
-            border: none;
-            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-            border-radius: 0.35rem;
-        }
-        .table th {
-            border-top: none;
+        .bg-lightblue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
             font-weight: 600;
-            font-size: 0.85rem;
-            color: #6e707e;
-            background-color: #f8f9fc;
         }
-        .table td {
-            border-top: 1px solid #e3e6f0;
-            padding: 0.75rem;
+        
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            border: none;
+            padding: 15px 12px;
+            font-size: 14px;
+            text-align: center;
             vertical-align: middle;
         }
-        .btn-group .btn {
-            border-radius: 0.25rem;
-            margin: 0 2px;
-            padding: 0.375rem 0.5rem;
-        }
-        .alert {
-            border-radius: 0.35rem;
+        
+        .table td {
             border: none;
+            padding: 12px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f1f1;
+            text-align: center;
         }
-        .table-hover tbody tr:hover {
-            background-color: #f8f9fc;
+        
+        .table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Button Styles */
+        .btn-sm {
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin: 2px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+        
+        .btn-info:hover, .btn-warning:hover, .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Tambah Lembaga Button */
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        }
+        
+        /* Header Card */
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+            border-bottom: none;
+            padding: 15px 20px;
+        }
+        
+        .card-title {
+            margin: 0;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Card styling */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        /* Alert Success */
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: none;
+            border-left: 4px solid #28a745;
+            border-radius: 8px;
+            color: #155724;
+        }
+        
+        /* Empty State */
+        .text-muted {
+            color: #6c757d !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .table td, .table th {
+                padding: 8px 6px;
+                font-size: 13px;
+            }
+            
+            .btn-sm {
+                padding: 4px 8px;
+                margin: 1px;
+            }
+        }
+        
+        /* Text alignment for specific columns */
+        .table td:first-child,
+        .table th:first-child {
+            text-align: center;
+        }
+        
+        .table td:nth-child(2),
+        .table td:nth-child(3),
+        .table td:nth-child(4) {
+            text-align: left;
+        }
+        
+        /* Content Header */
+        .content-header h1 {
+            font-weight: 700;
+            color: #2d3748;
         }
     </style>
 @stop
@@ -111,18 +252,9 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            $('#lembagaTable').DataTable({
-                "paging": false,
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "ordering": true,
-                "info": false,
-                "searching": true,
-                "language": {
-                    "search": "Cari:",
-                    "emptyTable": "Tidak ada data lembaga"
-                }
+            // Add smooth loading for forms
+            $('form').on('submit', function() {
+                $(this).find('button[type="submit"]').html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
             });
         });
     </script>
