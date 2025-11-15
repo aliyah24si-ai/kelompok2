@@ -12,7 +12,7 @@ class Warga extends Model
     protected $primaryKey = 'warga_id';
 
     protected $fillable = [
-        'no_ktp',       // ← Hanya field ini yang diisi manual
+        'no_ktp',       
         'nama',
         'jenis_kelamin',
         'agama',

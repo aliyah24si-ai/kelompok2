@@ -3,93 +3,91 @@
 @section('title', 'Daftar Jabatan')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Daftar Jabatan</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="m-0 text-dark">Daftar Jabatan</h1>
+        <a href="{{ route('jabatan.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Tambah Jabatan
+        </a>
+    </div>
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-tools">
-                        <a href="{{ route('jabatan.create') }}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> Tambah Jabatan
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <i class="fas fa-check-circle"></i> {{ session('success') }}
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                        </div>
-                    @endif
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    @endif
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead class="bg-lightblue">
-                                <tr>
-                                    <th width="5%">ID</th>
-                                    <th width="30%">Lembaga</th>
-                                    <th width="30%">Nama Jabatan</th>
-                                    <th width="15%">Level</th>
-                                    <th width="20%">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($jabatans as $jabatan)
-                                <tr>
-                                    <td class="text-center">{{ $jabatan->id }}</td>
-                                    <td style="max-width: 300px; word-wrap: break-word;">
-                                        {{ $jabatan->lembaga->nama_lembaga ?? 'N/A' }}
-                                    </td>
-                                    <td style="max-width: 300px; word-wrap: break-word;">
-                                        {{ $jabatan->nama_jabatan }}
-                                    </td>
-                                    <td>
-                                        <span class="badge 
-                                            @if($jabatan->level == 'Pimpinan') badge-success
-                                            @elseif($jabatan->level == 'Manager') badge-primary
-                                            @elseif($jabatan->level == 'Staff') badge-warning
-                                            @else badge-secondary @endif">
-                                            {{ $jabatan->level }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('jabatan.show', $jabatan->id) }}" 
-                                           class="btn btn-info btn-sm" title="Lihat">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('jabatan.edit', $jabatan->id) }}" 
-                                           class="btn btn-warning btn-sm" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('jabatan.destroy', $jabatan->id) }}" 
-                                              method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" 
-                                                    onclick="return confirm('Yakin ingin menghapus jabatan ini?')"
-                                                    title="Hapus">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
-                                        <i class="fas fa-database fa-2x mb-2"></i><br>
-                                        Tidak ada data jabatan
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Daftar Jabatan</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="bg-lightblue">
+                        <tr>
+                            <th width="5%">ID</th>
+                            <th width="30%">Lembaga</th>
+                            <th width="30%">Nama Jabatan</th>
+                            <th width="15%">Level</th>
+                            <th width="20%" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($jabatans as $jabatan)
+                        <tr>
+                            <td class="text-center fw-bold">{{ $jabatan->id }}</td>
+                            <td style="max-width: 300px; word-wrap: break-word;">
+                                {{ $jabatan->lembaga->nama_lembaga ?? 'N/A' }}
+                            </td>
+                            <td style="max-width: 300px; word-wrap: break-word;">
+                                {{ $jabatan->nama_jabatan }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge 
+                                    @if($jabatan->level == 'Pimpinan') badge-success
+                                    @elseif($jabatan->level == 'Manager') badge-primary
+                                    @elseif($jabatan->level == 'Staff') badge-warning
+                                    @else badge-secondary @endif">
+                                    {{ $jabatan->level }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ route('jabatan.show', $jabatan->id) }}" 
+                                   class="btn btn-info btn-sm" title="Lihat">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('jabatan.edit', $jabatan->id) }}" 
+                                   class="btn btn-warning btn-sm" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('jabatan.destroy', $jabatan->id) }}" 
+                                      method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" 
+                                            onclick="return confirm('Yakin ingin menghapus jabatan ini?')"
+                                            title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-database fa-2x mb-2"></i><br>
+                                Tidak ada data jabatan
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
+        {{-- Hapus bagian pagination jika tidak menggunakan paginate --}}
     </div>
 @stop
 
@@ -212,14 +210,16 @@
         
         /* Header Card */
         .card-header {
-            background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+            border-bottom: none;
             padding: 15px 20px;
         }
         
         .card-title {
             margin: 0;
             font-weight: 600;
+            color: white;
         }
 
         /* Card styling */
@@ -270,6 +270,24 @@
         .table td:nth-child(2),
         .table td:nth-child(3) {
             text-align: left;
+        }
+        
+        /* Content Header */
+        .content-header h1 {
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .me-1 {
+            margin-right: 0.25rem !important;
+        }
+        
+        .me-2 {
+            margin-right: 0.5rem !important;
+        }
+        
+        .fw-bold {
+            font-weight: 700 !important;
         }
     </style>
 @stop

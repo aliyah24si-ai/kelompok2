@@ -71,3 +71,4 @@ class JabatanController extends Controller
             ->with('success', 'Jabatan berhasil dihapus!');
     }
 }
+//git config --global core.autocrlf true
