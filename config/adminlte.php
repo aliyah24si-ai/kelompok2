@@ -303,8 +303,8 @@ return [
 
         // Sidebar items:
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'type' => 'sidebar-menu-searc',
+            'text' => 'searc',
         ],
 
         // HEADER UNTUK DATA DESA

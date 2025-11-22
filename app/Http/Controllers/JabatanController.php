@@ -3,37 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jabatan;
-use App\Models\LembagaDesa; // GANTI INI
+use App\Models\LembagaDesa;
 use Illuminate\Http\Request;
 
 class JabatanController extends Controller
 {
-     public function index()
+    public function index(Request $request)
     {
-        $jabatans = Jabatan::with('lembaga')->get();
-        return view('jabatan.index', compact('jabatans'))
+        $query = Jabatan::with('lembaga');
+        
+        // Search by nama jabatan
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_jabatan', 'like', '%' . $request->search . '%');
+        }
+        
+        // Filter by lembaga
+        if ($request->has('lembaga_id') && $request->lembaga_id != '') {
+            $query->where('lembaga_id', $request->lembaga_id);
+        }
+        
+        // Filter by level
+        if ($request->has('level') && $request->level != '') {
+            $query->where('level', $request->level);
+        }
+        
+        $jabatans = $query->paginate(10);
+        $lembagas = LembagaDesa::all();
+        
+        return view('jabatan.index', compact('jabatans', 'lembagas'))
             ->with('success', session('success'));
     }
 
+    // Method lainnya tetap sama...
     public function create()
     {
-        $lembagas = LembagaDesa::all(); // GANTI INI
+        $lembagas = LembagaDesa::all();
         return view('jabatan.create', compact('lembagas'));
     }
 
     public function store(Request $request)
     {
-    $request->validate([
-        'lembaga_id' => 'required|exists:lembaga_desa,lembaga_id',
-        'nama_jabatan' => 'required|string|max:255',
-        'level' => 'required|in:Pimpinan,Manager,Staff,Operator', // Validasi pilihan tetap
-    ]);
+        $request->validate([
+            'lembaga_id' => 'required|exists:lembaga_desa,lembaga_id',
+            'nama_jabatan' => 'required|string|max:255',
+            'level' => 'required|in:Pimpinan,Manager,Staff,Operator',
+        ]);
 
-    Jabatan::create($request->all());
+        Jabatan::create($request->all());
 
-    return redirect()->route('jabatan.index')
-        ->with('success', 'Jabatan berhasil ditambahkan!');
-}
+        return redirect()->route('jabatan.index')
+            ->with('success', 'Jabatan berhasil ditambahkan!');
+    }
+
     public function show($id)
     {
         $jabatan = Jabatan::with('lembaga')->findOrFail($id);
@@ -43,7 +64,7 @@ class JabatanController extends Controller
     public function edit($id)
     {
         $jabatan = Jabatan::findOrFail($id);
-        $lembagas = LembagaDesa::all(); // PASTIKAN PAKAI LembagaDesa
+        $lembagas = LembagaDesa::all();
         return view('jabatan.edit', compact('jabatan', 'lembagas'));
     }
 
@@ -71,4 +92,3 @@ class JabatanController extends Controller
             ->with('success', 'Jabatan berhasil dihapus!');
     }
 }
-//git config --global core.autocrlf true
