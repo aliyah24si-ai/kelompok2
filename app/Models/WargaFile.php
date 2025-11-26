@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class WargaFile extends Model
 {
@@ -30,7 +29,7 @@ class WargaFile extends Model
 
     public function getFileUrlAttribute(): string
     {
-        return Storage::disk('public')->url($this->file_path);
+        return asset('storage/' . $this->file_path);
     }
 
     public function getReadableSizeAttribute(): string
@@ -51,4 +50,5 @@ class WargaFile extends Model
         return number_format($size, $index === 0 ? 0 : 2) . ' ' . $units[$index];
     }
 }
+
 

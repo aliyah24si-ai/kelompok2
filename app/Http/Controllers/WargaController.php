@@ -9,10 +9,32 @@ use Illuminate\Support\Facades\Storage;
 
 class WargaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $wargas = Warga::latest()->paginate(10);
-        return view('wargas.index', compact('wargas'));
+        $query = Warga::query()->latest();
+
+        if ($request->filled('q')) {
+            $search = $request->q;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('no_ktp', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('jenis_kelamin')) {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+
+        if ($request->filled('agama')) {
+            $query->where('agama', $request->agama);
+        }
+
+        $wargas = $query->paginate(10)->withQueryString();
+
+        $agamas = Warga::select('agama')->distinct()->orderBy('agama')->pluck('agama');
+
+        return view('wargas.index', compact('wargas', 'agamas'));
     }
 
     public function create()

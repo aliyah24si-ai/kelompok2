@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Warga extends Model
 {
@@ -34,12 +33,10 @@ class Warga extends Model
 
     public function getFotoProfilUrlAttribute(): string
     {
-        if (!$this->foto_profil_path) {
-            return asset('vendor/adminlte/dist/img/avatar5.png');
-        }
-
-        return Storage::disk('public')->url($this->foto_profil_path);
+        return $this->foto_profil_path
+            ? asset('storage/' . $this->foto_profil_path)
+            : asset('vendor/adminlte/dist/img/avatar5.png');
     }
 
-    // warga_id TIDAK masuk fillable, jadi otomatis
+  
 }

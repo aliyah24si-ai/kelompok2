@@ -21,7 +21,51 @@
 
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h3 class="card-title">Daftar Warga</h3>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <h3 class="card-title mb-2 mb-md-0">Daftar Warga</h3>
+                <form method="GET" action="{{ route('wargas.index') }}" class="w-100 w-md-auto">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label class="small mb-1 text-white-50">Cari (Nama / No KTP / Email)</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white border-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" name="q" class="form-control border-0"
+                                       placeholder="Ketik kata kunci..."
+                                       value="{{ request('q') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <label class="small mb-1 text-white-50">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" class="form-select form-select-sm border-0">
+                                <option value="">Semua</option>
+                                <option value="L" {{ request('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ request('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <label class="small mb-1 text-white-50">Agama</label>
+                            <select name="agama" class="form-select form-select-sm border-0">
+                                <option value="">Semua</option>
+                                @foreach($agamas as $agama)
+                                    <option value="{{ $agama }}" {{ request('agama') == $agama ? 'selected' : '' }}>
+                                        {{ $agama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex gap-1">
+                            <button type="submit" class="btn btn-light btn-sm w-100">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                            <a href="{{ route('wargas.index') }}" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-sync-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -107,8 +151,19 @@
             </div>
         </div>
         @if($wargas->hasPages())
-        <div class="card-footer">
-            {{ $wargas->links() }}
+        <div class="card-footer d-flex justify-content-between align-items-center flex-column flex-md-row gap-2">
+            <div class="text-muted small">
+                Menampilkan
+                <span class="fw-semibold">{{ $wargas->firstItem() }}</span>
+                -
+                <span class="fw-semibold">{{ $wargas->lastItem() }}</span>
+                dari
+                <span class="fw-semibold">{{ $wargas->total() }}</span>
+                data
+            </div>
+            <div>
+                {{ $wargas->onEachSide(1)->links() }}
+            </div>
         </div>
         @endif
     </div>
@@ -311,6 +366,36 @@
         .content-header h1 {
             font-weight: 700;
             color: #2d3748;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-link {
+            border-radius: 999px !important;
+            margin: 0 2px;
+            border: none;
+            color: #4a5568;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        .pagination .page-link:hover {
+            background-color: #edf2f7;
+            color: #2d3748;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background-color: #f7fafc;
+            color: #a0aec0;
         }
     </style>
 @stop
