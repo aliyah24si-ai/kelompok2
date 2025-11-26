@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Warga;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class WargaController extends Controller
 {
@@ -28,6 +30,9 @@ class WargaController extends Controller
             'pekerjaan' => 'required|string|max:50',
             'telp' => 'nullable|string|max:15',
             'email' => 'nullable|email|max:100|unique:wargas',
+            'foto_profil' => 'nullable|image|max:2048',
+            'dokumen' => 'nullable|array',
+            'dokumen.*' => 'file|max:5120',
         ];
 
         $messages = [
@@ -37,18 +42,39 @@ class WargaController extends Controller
 
         $data = $request->validate($rules, $messages);
 
-        Warga::create($data);
+        DB::transaction(function () use ($request, &$data) {
+            if ($request->hasFile('foto_profil')) {
+                $data['foto_profil_path'] = $request->file('foto_profil')->store('warga/profiles', 'public');
+            }
+
+            $warga = Warga::create($data);
+
+            if ($request->hasFile('dokumen')) {
+                foreach ($request->file('dokumen') as $file) {
+                    $path = $file->store('warga/files', 'public');
+
+                    $warga->files()->create([
+                        'original_name' => $file->getClientOriginalName(),
+                        'file_path' => $path,
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getClientMimeType(),
+                    ]);
+                }
+            }
+        });
 
         return redirect()->route('wargas.index')->with('success', 'Warga berhasil ditambahkan.');
     }
 
     public function show(Warga $warga)
     {
+        $warga->load('files');
         return view('wargas.show', compact('warga'));
     }
 
     public function edit(Warga $warga)
     {
+        $warga->load('files');
         return view('wargas.edit', compact('warga'));
     }
 
@@ -62,6 +88,9 @@ class WargaController extends Controller
             'pekerjaan' => 'required|string|max:50',
             'telp' => 'nullable|string|max:15',
             'email' => 'nullable|email|max:100|unique:wargas,email,' . $warga->warga_id . ',warga_id',
+            'foto_profil' => 'nullable|image|max:2048',
+            'dokumen' => 'nullable|array',
+            'dokumen.*' => 'file|max:5120',
         ];
 
         $messages = [
@@ -71,13 +100,47 @@ class WargaController extends Controller
 
         $data = $request->validate($rules, $messages);
 
-        $warga->update($data);
+        DB::transaction(function () use ($request, $warga, &$data) {
+            if ($request->hasFile('foto_profil')) {
+                if ($warga->foto_profil_path) {
+                    Storage::disk('public')->delete($warga->foto_profil_path);
+                }
+
+                $data['foto_profil_path'] = $request->file('foto_profil')->store('warga/profiles', 'public');
+            }
+
+            $warga->update($data);
+
+            if ($request->hasFile('dokumen')) {
+                foreach ($request->file('dokumen') as $file) {
+                    $path = $file->store('warga/files', 'public');
+
+                    $warga->files()->create([
+                        'original_name' => $file->getClientOriginalName(),
+                        'file_path' => $path,
+                        'file_size' => $file->getSize(),
+                        'mime_type' => $file->getClientMimeType(),
+                    ]);
+                }
+            }
+        });
 
         return redirect()->route('wargas.index')->with('success', 'Warga berhasil diupdate.');
     }
 
     public function destroy(Warga $warga)
     {
+        $warga->load('files');
+
+        if ($warga->foto_profil_path) {
+            Storage::disk('public')->delete($warga->foto_profil_path);
+        }
+
+        foreach ($warga->files as $file) {
+            Storage::disk('public')->delete($file->file_path);
+            $file->delete();
+        }
+
         $warga->delete();
         return redirect()->route('wargas.index')->with('success', 'Warga berhasil dihapus.');
     }

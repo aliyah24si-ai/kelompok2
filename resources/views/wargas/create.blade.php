@@ -12,7 +12,7 @@
             <h5 class="card-title">Form Tambah Data Warga</h5>
         </div>
         <div class="card-body">
-            <form action="{{ route('wargas.store') }}" method="POST">
+            <form action="{{ route('wargas.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @include('wargas.partials.form')
 

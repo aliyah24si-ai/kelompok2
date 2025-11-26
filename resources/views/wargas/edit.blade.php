@@ -9,7 +9,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('wargas.update', $warga) }}" method="POST">
+            <form action="{{ route('wargas.update', $warga) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 @include('wargas.partials.form')

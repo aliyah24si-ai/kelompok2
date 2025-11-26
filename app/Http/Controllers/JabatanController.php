@@ -34,7 +34,7 @@ class JabatanController extends Controller
             ->with('success', session('success'));
     }
 
-    // Method lainnya tetap sama...
+    
     public function create()
     {
         $lembagas = LembagaDesa::all();

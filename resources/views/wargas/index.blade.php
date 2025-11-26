@@ -28,19 +28,25 @@
                 <table class="table table-bordered table-striped table-hover">
                     <thead class="bg-lightblue">
                         <tr>
+                            <th width="6%">Foto</th>
                             <th width="5%">ID</th>
                             <th width="12%">No KTP</th>
                             <th width="20%">Nama Lengkap</th>
                             <th width="10%" class="text-center">Jenis Kelamin</th>
                             <th width="10%">Agama</th>
                             <th width="15%">Pekerjaan</th>
-                            <th width="18%">Email</th>
-                            <th width="10%" class="text-center">Aksi</th>
+                            <th width="15%">Email</th>
+                            <th width="7%" class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                     @forelse($wargas as $item)
                         <tr>
+                            <td class="text-center">
+                                <div class="table-avatar">
+                                    <img src="{{ asset('storage/'.$item->foto_profil_path) }}" alt="{{ $item->nama }}">
+                                </div>
+                            </td>
                             <td class="text-center fw-bold">{{ $item->warga_id }}</td>
                             <td style="max-width: 150px; word-wrap: break-word;">
                                 {{ $item->no_ktp }}
@@ -271,17 +277,34 @@
         }
         
         /* Text alignment for specific columns */
+        .table td:nth-child(3),
+        .table td:nth-child(4),
+        .table td:nth-child(6),
+        .table td:nth-child(7),
+        .table td:nth-child(8) {
+            text-align: left;
+        }
+
+        .table th:first-child,
         .table td:first-child,
-        .table th:first-child {
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
             text-align: center;
         }
-        
-        .table td:nth-child(2),
-        .table td:nth-child(3),
-        .table td:nth-child(5),
-        .table td:nth-child(6),
-        .table td:nth-child(7) {
-            text-align: left;
+
+        .table-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .table-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         /* Content Header */

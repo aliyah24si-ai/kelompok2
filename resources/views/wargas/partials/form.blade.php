@@ -135,6 +135,65 @@
                 <i class="fas fa-info-circle me-1"></i>Email harus unik dan belum terdaftar
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="foto_profil" class="form-label fw-semibold text-dark">
+                    <i class="fas fa-camera me-1 text-primary"></i>Foto Profil
+                </label>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="foto-preview border rounded shadow-sm">
+                        <img
+                            id="fotoPreview"
+                            src="{{ isset($warga) ? $warga->foto_profil_url : asset('vendor/adminlte/dist/img/avatar5.png') }}"
+                            alt="Preview Foto"
+                            class="img-fluid rounded"
+                        >
+                    </div>
+                    <div class="flex-grow-1">
+                        <input type="file" name="foto_profil" id="foto_profil"
+                               accept="image/*"
+                               class="form-control @error('foto_profil') is-invalid @enderror">
+                        <small class="text-muted d-block mt-2">
+                            Format gambar (JPG/PNG) dengan ukuran maksimal 2 MB.
+                        </small>
+                        @error('foto_profil') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="dokumen" class="form-label fw-semibold text-dark">
+                    <i class="fas fa-folder-open me-1 text-primary"></i>Dokumen Pendukung
+                </label>
+                <input type="file" name="dokumen[]" id="dokumen"
+                       class="form-control @error('dokumen.*') is-invalid @enderror"
+                       multiple>
+                <small class="text-muted d-block mt-2">
+                    Unggah beberapa file sekaligus (PDF/JPG/PNG, maks 5 MB per file).
+                </small>
+                @error('dokumen.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+
+                @if(isset($warga) && $warga->files->count())
+                    <div class="mt-3">
+                        <div class="fw-semibold mb-2 text-dark">Dokumen Tersimpan</div>
+                        <ul class="list-group list-group-flush rounded shadow-sm">
+                            @foreach($warga->files as $file)
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <div>
+                                        <i class="fas fa-paperclip me-2 text-primary"></i>{{ $file->original_name }}
+                                        <small class="text-muted ms-2">({{ $file->readable_size }})</small>
+                                    </div>
+                                    <a href="{{ $file->file_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download me-1"></i>Lihat
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 
@@ -161,4 +220,39 @@
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
+.foto-preview {
+    width: 120px;
+    height: 120px;
+    background-color: #f9fafb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.foto-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 </style>
+
+@push('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('foto_profil');
+        const preview = document.getElementById('fotoPreview');
+
+        if (input && preview) {
+            input.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    });
+</script>
+@endpush

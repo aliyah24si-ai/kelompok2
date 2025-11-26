@@ -9,7 +9,7 @@ class LembagaDesa extends Model
 {
     use HasFactory;
 
-    protected $table = 'lembaga_desa'; // UBAH INI - SESUAIKAN DENGAN MIGRATION
+    protected $table = 'lembaga_desa'; 
     protected $primaryKey = 'lembaga_id';
     
     protected $fillable = [
@@ -18,7 +18,7 @@ class LembagaDesa extends Model
         'kontak',
     ];
 
-    // TAMBAHKAN RELATIONSHIP
+    
     public function jabatans()
     {
         return $this->hasMany(Jabatan::class, 'lembaga_id', 'lembaga_id');
