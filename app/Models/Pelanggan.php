@@ -26,3 +26,6 @@ class Pelanggan extends Model
 }
 
 
+
+
+

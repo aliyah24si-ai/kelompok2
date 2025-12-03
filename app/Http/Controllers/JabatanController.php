@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class JabatanController extends Controller
 {
+    
     public function index(Request $request)
     {
         $query = Jabatan::with('lembaga');

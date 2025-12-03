@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class LembagaDesaController extends Controller
 {
+    
+
     public function index()
     {
         $lembaga_desas = LembagaDesa::latest()->paginate(10);
