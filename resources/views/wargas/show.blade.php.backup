@@ -26,82 +26,52 @@
                     <strong>Dokumen Terunggah</strong>
                 </div>
                 <div class="card-body">
-                    @php
-                        $files = $warga->files ?? collect();
-                        $fileCount = is_object($files) ? $files->count() : (is_array($files) ? count($files) : 0);
-                    @endphp
-                    
-                    @if($fileCount > 0)
+                    @if($warga->files->count())
                         <ul class="list-group list-group-flush">
-                            @foreach($files as $file)
+                            @foreach($warga->files as $file)
                                 <li class="list-group-item d-flex justify-content-between flex-wrap align-items-center document-item">
-                                    <div class="flex-grow-1">
-                                        <i class="fas fa-file-alt me-2 text-primary"></i>
-                                        <strong>{{ $file->original_name ?? 'Dokumen' }}</strong>
-                                        <small class="text-muted d-block">{{ $file->readable_size ?? '0 B' }}</small>
+                                    <div>
+                                        <i class="fas fa-file-alt me-2 text-primary"></i>{{ $file->original_name }}
+                                        <small class="text-muted d-block">{{ $file->readable_size }}</small>
                                     </div>
-                                    <div class="ms-2">
-                                        <button type="button" class="btn btn-sm btn-outline-primary doc-view-btn" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#docModal{{ $file->id ?? $loop->index }}"
-                                                title="Lihat Dokumen">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        @if($file->file_url)
-                                            <a href="{{ $file->file_url }}" class="btn btn-sm btn-outline-success ms-2" 
-                                               target="_blank" title="Download">
-                                                <i class="fas fa-download"></i>
-                                            </a>
-                                        @endif
-                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary doc-view-btn" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#docModal{{ $file->id }}"
+                                            title="Lihat Dokumen">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </li>
 
                                 <!-- Modal untuk Dokumen -->
-                                <div class="modal fade" id="docModal{{ $file->id ?? $loop->index }}" tabindex="-1" 
-                                     aria-labelledby="docModalLabel{{ $file->id ?? $loop->index }}" aria-hidden="true">
+                                <div class="modal fade" id="docModal{{ $file->id }}" tabindex="-1" aria-labelledby="docModalLabel{{ $file->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered">
                                         <div class="modal-content border-0 doc-modal-content">
                                             <div class="modal-header doc-modal-header">
-                                                <h5 class="modal-title" id="docModalLabel{{ $file->id ?? $loop->index }}">
-                                                    <i class="fas fa-file-alt me-2"></i>{{ $file->original_name ?? 'Dokumen' }}
+                                                <h5 class="modal-title" id="docModalLabel{{ $file->id }}">
+                                                    <i class="fas fa-file-alt me-2"></i>{{ $file->original_name }}
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body doc-modal-body">
-                                                @php
-                                                    $fileName = $file->original_name ?? '';
-                                                    $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                                                    $fileUrl = $file->file_url ?? asset('storage/' . ($file->file_path ?? ''));
-                                                    $imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                                                @endphp
-                                                
-                                                @if(in_array($ext, $imageExts) && $fileUrl)
-                                                    <img src="{{ $fileUrl }}" alt="{{ $fileName }}" class="img-fluid doc-preview" 
-                                                         style="max-height: 500px; width: 100%; object-fit: contain;">
-                                                @elseif($ext === 'pdf' && $fileUrl)
-                                                    <iframe src="{{ $fileUrl }}" style="width: 100%; height: 500px; border: none; border-radius: 10px;"></iframe>
+                                                @if(in_array(strtolower(pathinfo($file->original_name, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                    <img src="{{ $file->file_url }}" alt="{{ $file->original_name }}" class="img-fluid doc-preview" style="max-height: 500px; width: 100%; object-fit: contain;">
+                                                @elseif(in_array(strtolower(pathinfo($file->original_name, PATHINFO_EXTENSION)), ['pdf']))
+                                                    <iframe src="{{ $file->file_url }}" style="width: 100%; height: 500px; border: none; border-radius: 10px;"></iframe>
                                                 @else
                                                     <div class="text-center py-5">
                                                         <i class="fas fa-file fa-5x text-muted mb-3"></i>
-                                                        <p class="text-muted">
-                                                            File tipe <strong>{{ $ext ? strtoupper($ext) : 'Unknown' }}</strong> 
-                                                            tidak dapat ditampilkan dalam preview.
-                                                        </p>
-                                                        @if($fileUrl)
-                                                            <a href="{{ $fileUrl }}" class="btn btn-primary btn-sm" target="_blank">
-                                                                <i class="fas fa-download me-2"></i>Download File
-                                                            </a>
-                                                        @endif
+                                                        <p class="text-muted">File tipe {{ strtoupper(pathinfo($file->original_name, PATHINFO_EXTENSION)) }} tidak dapat ditampilkan dalam preview.</p>
+                                                        <a href="{{ $file->file_url }}" class="btn btn-primary" target="_blank">
+                                                            <i class="fas fa-download me-2"></i>Download File
+                                                        </a>
                                                     </div>
                                                 @endif
                                             </div>
                                             <div class="modal-footer doc-modal-footer">
-                                                <p class="text-muted mb-0 me-auto"><small>Ukuran: {{ $file->readable_size ?? '0 B' }}</small></p>
-                                                @if($fileUrl)
-                                                    <a href="{{ $fileUrl }}" class="btn btn-primary doc-download-btn" target="_blank">
-                                                        <i class="fas fa-download me-2"></i>Download
-                                                    </a>
-                                                @endif
+                                                <p class="text-muted mb-0 me-auto"><small>Ukuran: {{ $file->readable_size }}</small></p>
+                                                <a href="{{ $file->file_url }}" class="btn btn-primary doc-download-btn" target="_blank">
+                                                    <i class="fas fa-download me-2"></i>Download
+                                                </a>
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     <i class="fas fa-times me-2"></i>Tutup
                                                 </button>
@@ -112,10 +82,7 @@
                             @endforeach
                         </ul>
                     @else
-                        <div class="text-center py-4">
-                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">Belum ada dokumen terunggah.</p>
-                        </div>
+                        <p class="text-muted mb-0">Belum ada dokumen terunggah.</p>
                     @endif
                 </div>
             </div>
@@ -396,19 +363,6 @@
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4) !important;
         color: white !important;
-    }
-
-    .btn-outline-success {
-        border-color: #10b981 !important;
-        color: #10b981 !important;
-        transition: all 0.3s ease !important;
-    }
-
-    .btn-outline-success:hover {
-        background-color: #10b981 !important;
-        border-color: #10b981 !important;
-        color: white !important;
-        transform: scale(1.05) !important;
     }
 </style>
 @stop

@@ -9,3 +9,84 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* ===== AdminLTE user dropdown overrides ===== */
+.user-menu .dropdown-menu {
+    min-width: 240px;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    background: #fff;
+}
+.user-footer {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    align-items: center;
+}
+.user-footer .nav-link.btn,
+.user-footer .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: calc(50% - 6px);
+    justify-content: center;
+    padding: 10px 14px;
+    border: 1px solid #e8e8ef;
+    background: linear-gradient(180deg,#ffffff,#fbfbff);
+    color: #2c3e50;
+    border-radius: 8px;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    box-shadow: none;
+}
+.user-footer .nav-link.btn i,
+.user-footer .btn i { font-size: 18px; }
+.user-footer .nav-link.btn:hover,
+.user-footer .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(92,40,180,0.12);
+    border-color: rgba(124,58,237,0.12);
+}
+.user-footer .nav-link.btn i.fa-user { color: #4f46e5; }
+.user-footer .btn i.fa-power-off { color: #c53030; }
+
+/* make dropdown items padded and slightly elevated */
+.user-menu .dropdown-menu .dropdown-item {
+    padding: 10px 12px;
+    border-radius: 6px;
+}
+.user-menu .dropdown-menu .dropdown-item:hover {
+    background: rgba(124,58,237,0.06);
+}
+
+/* ensure responsive on small screens */
+@media (max-width: 576px) {
+    .user-footer { flex-direction: column; }
+    .user-footer .nav-link.btn, .user-footer .btn { width: 100%; }
+}
+
+/* Purple gradient and small animations used for users and perangkat views */
+:root {
+    --pd-purple-a: #6f42c1;
+    --pd-purple-b: #9b59b6;
+}
+
+.pd-gradient {
+    background: linear-gradient(135deg, var(--pd-purple-a) 0%, var(--pd-purple-b) 100%);
+    color: #fff;
+}
+
+.pd-btn {
+    background: linear-gradient(90deg, rgba(111,66,193,1) 0%, rgba(155,89,182,1) 100%);
+    border: none;
+    color: #fff;
+}
+
+@keyframes pd-slide-in {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.pd-animated {
+    animation: pd-slide-in .35s ease both;
+}

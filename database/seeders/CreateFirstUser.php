@@ -18,10 +18,13 @@ class CreateFirstUser extends Seeder
             [
                 'name' => 'Admin',
                 'password' => Hash::make('alea123'),
-                'role' => 'admin',
+                'role' => User::ADMIN,
             ]
         );
     }
 }
+
+
+
 
 

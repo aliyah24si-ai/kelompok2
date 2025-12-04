@@ -263,7 +263,7 @@ return [
     'register_url'                            => 'register',
     'password_reset_url'                      => 'password/reset',
     'password_email_url'                      => 'password/email',
-    'profile_url'                             => false,
+    'profile_url'                             => 'profile',
     'disable_darkmode_routes'                 => false,
 
     /*
@@ -329,9 +329,25 @@ return [
             'icon' => 'fas fa-fw fa-user-tie',
             'active' => ['jabatan*'],
         ],
+         [
+            'text'   => 'Perangkat Desa',
+            'url'    => 'perangkat_desa',
+            'icon'   => 'fas fa-user-tie',
+            'active' => ['perangkat_desa*'],
+            'can'    => 'isAdmin',
+        ],
 
         // HEADER UNTUK PENGATURAN
         ['header' => 'PENGATURAN'],
+
+        [
+            'text'   => 'Users',
+            'url'    => 'users',
+            'icon'   => 'fas fa-users',
+            'active' => ['users*'],
+            'can'    => 'isAdmin',
+        ],
+       
 
         [
             'text' => 'profile',

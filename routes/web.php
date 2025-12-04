@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\LembagaDesaController;
 use App\Http\Controllers\JabatanController;
@@ -26,9 +27,15 @@ Route::middleware([CheckIsLogin::class])->group(function () {
         return redirect()->route('wargas.index');
     })->name('dashboard');
 
-    Route::middleware([CheckRole::class . ':admin,user'])->group(function () {
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
+
+    Route::middleware([CheckRole::class . ':admin'])->group(function () {
+        Route::resource('users', UserController::class);
         Route::resource('wargas', WargaController::class);
         Route::resource('lembaga', LembagaDesaController::class);
         Route::resource('jabatan', JabatanController::class);
+        Route::resource('perangkat_desa', \App\Http\Controllers\PerangkatDesaController::class);
     });
 });

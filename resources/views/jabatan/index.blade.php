@@ -76,23 +76,11 @@
                 </div>
             </div>
 
-            <!-- Info Hasil Filter -->
-            @if(request()->has('search') || request()->has('lembaga_id') || request()->has('level'))
-                <div class="alert alert-info mb-3">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Menampilkan hasil 
-                    @if(request('search')) pencarian "{{ request('search') }}" @endif
-                    @if(request('lembaga_id')) 
-                        @php $lembaga = $lembagas->where('lembaga_id', request('lembaga_id'))->first(); @endphp
-                        @if($lembaga) di lembaga {{ $lembaga->nama_lembaga }} @endif
-                    @endif
-                    @if(request('level')) dengan level {{ request('level') }} @endif
-                    <a href="{{ route('jabatan.index') }}" class="float-right text-danger">
-                        <i class="fas fa-times"></i> Hapus Filter
-                    </a>
-                </div>
-            @endif
-
+    <div class="card pd-animated mt-3">
+        <div class="card-header pd-gradient">
+            <h5 style="color: white; margin: 0;">Daftar Jabatan ({{ $jabatans->total() }} data)</h5>
+        </div>
+        <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover">
                     <thead class="bg-lightblue">
@@ -211,512 +199,418 @@
         </div>
     </div>
 @stop
-
 @section('css')
     <style>
-        /* CSS yang sama seperti sebelumnya, tetap dipertahankan */
-        .bg-lightblue {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white;
-            font-weight: 600;
+        /* ===== VARIABLES ===== */
+        :root {
+            --purple-light: #8B5CF6;
+            --purple: #7C3AED;
+            --purple-dark: #6D28D9;
+            --teal-light: #99F6E4;
+            --teal: #2DD4BF;
+            --teal-dark: #14B8A6;
+            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-purple: 0 10px 15px -3px rgba(139, 92, 246, 0.1);
         }
-        
-        .table-hover tbody tr:hover {
-            background-color: #f8f9fa;
-            transform: translateY(-1px);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .badge {
-            font-size: 0.8em;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-weight: 600;
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-        
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: 10px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-        }
-        
-        .table {
-            border-radius: 10px;
+
+        /* ===== CARD ===== */
+        .pd-animated {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--shadow-light);
             overflow: hidden;
-            margin-bottom: 0;
-        }
-        
-        .table th {
-            border: none;
-            padding: 15px 12px;
-            font-size: 14px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        
-        .table td {
-            border: none;
-            padding: 12px;
-            vertical-align: middle;
-            border-bottom: 1px solid #f1f1f1;
-            text-align: center;
-        }
-        
-        .table tbody tr:nth-child(even) {
-            background-color: #fafafa;
-        }
-        
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        /* Badge Colors */
-        .badge-success {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        }
-        
-        .badge-primary {
-            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-        }
-        
-        .badge-warning {
-            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
-        }
-        
-        .badge-secondary {
-            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
-        }
-        
-        /* Button Styles */
-        .btn-sm {
-            border-radius: 6px;
-            padding: 6px 10px;
-            margin: 2px;
-            border: none;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-info {
-            background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        }
-        
-        .btn-info:hover, .btn-warning:hover, .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            background: white;
+            margin-top: 20px;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        /* Tambah Jabatan Button */
-        .btn-primary {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 8px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .pd-animated:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-purple);
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
-        }
-        
-        /* Header Card */
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white;
+
+        /* ===== HEADER CARD ===== */
+        .pd-gradient {
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 50%, var(--purple-dark) 100%);
             border-bottom: none;
-            padding: 15px 20px;
+            padding: 1.25rem 1.5rem;
+            color: white;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .card-title {
+
+        .pd-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.7s ease;
+        }
+
+        .pd-gradient:hover::before {
+            left: 100%;
+        }
+
+        .pd-gradient h5 {
+            font-weight: 700;
+            letter-spacing: 0.3px;
             margin: 0;
-            font-weight: 600;
-            color: white;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Card styling */
-        .card {
+        /* ===== TOMBOL TAMBAH ===== */
+        .btn[style*="background: linear-gradient(90deg, #6f42c1, #9b59b6)"] {
             border: none;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 0.75rem 1.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%) !important;
+            color: white;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+            position: relative;
+            overflow: hidden;
         }
-        
-        /* Alert Success */
-        .alert-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+
+        .btn[style*="background: linear-gradient(90deg, #6f42c1, #9b59b6)"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+            animation: pulse 1s infinite;
+        }
+
+        /* ===== FORM INPUT ===== */
+        .form-control {
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8fafc;
+        }
+
+        .form-control:focus {
+            border-color: var(--purple-light);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        /* ===== CUSTOM BUTTONS ===== */
+        .pd-btn {
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%);
+            color: white;
             border: none;
-            border-left: 4px solid #28a745;
+            border-radius: 10px;
+            padding: 0.65rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+
+        .pd-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #CBD5E0;
+            color: #4A5568;
+            border-radius: 10px;
+            padding: 0.65rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%);
+            color: white;
+            transform: translateY(-3px);
+            border-color: #4A5568;
+        }
+
+        /* ===== TABLE ===== */
+        .table-responsive {
+            border-radius: 14px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            box-shadow: var(--shadow-light);
+        }
+
+        /* TABLE HEADER - Gradien teal yang fresh */
+        .table thead {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+            position: relative;
+        }
+
+        .table thead th {
+            color: white;
+            font-weight: 700;
+            border: none;
+            padding: 1.1rem 1rem;
+            font-size: 0.9rem;
+            text-align: center;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .table thead th:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* TABLE BODY */
+        .table tbody tr {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(90deg, 
+                rgba(139, 92, 246, 0.05) 0%, 
+                rgba(139, 92, 246, 0.03) 100%);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.08);
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        /* ===== FOTO ANIMASI ===== */
+        .table tbody td img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table tbody td img:hover {
+            transform: scale(3) rotate(2deg);
+            z-index: 100;
+            position: relative;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                0 0 0 8px rgba(139, 92, 246, 0.1);
+            border: 3px solid var(--purple);
+        }
+
+        /* ===== BADGE ===== */
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .badge-secondary {
+            background: linear-gradient(135deg, #A0AEC0 0%, #718096 100%);
+            color: white;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ===== TOMBOL AKSI ===== */
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
             border-radius: 8px;
-            color: #155724;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            margin: 0 2px;
+            min-width: 36px;
         }
-        
-        /* Empty State */
+
+        .btn-outline-primary {
+            background: transparent;
+            border: 2px solid #4299E1;
+            color: #4299E1;
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #4299E1 0%, #3182ce 100%);
+            color: white;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(66, 153, 225, 0.3);
+        }
+
+        .pd-btn.btn-sm {
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%);
+            color: white;
+            border: none;
+        }
+
+        .pd-btn.btn-sm:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
+        }
+
+        .btn-outline-danger {
+            background: transparent;
+            border: 2px solid #FC8181;
+            color: #FC8181;
+        }
+
+        .btn-outline-danger:hover {
+            background: linear-gradient(135deg, #FC8181 0%, #F56565 100%);
+            color: white;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 6px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        /* ===== NO DATA ===== */
         .text-muted {
-            color: #6c757d !important;
+            color: #94A3B8;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 3rem;
+            animation: fadeIn 0.8s ease-out;
         }
-        
-        /* Responsive */
+
+        .text-muted i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: var(--purple-light);
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== ALERT ===== */
+        .alert-success {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            color: #065F46;
+            border: 2px solid #34D399;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            animation: fadeIn 0.5s ease-out;
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.2);
+        }
+
+        .alert-success i {
+            color: #10B981;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination {
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .page-link {
+            border: 1px solid #E2E8F0;
+            color: var(--purple);
+            border-radius: 8px;
+            margin: 0 4px;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1rem;
+            font-weight: 600;
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%);
+            border-color: var(--purple);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .page-link:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+            color: var(--purple-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15);
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .table td, .table th {
-                padding: 8px 6px;
-                font-size: 13px;
+            .pd-animated {
+                border-radius: 12px;
+                margin-top: 15px;
+            }
+            
+            .pd-gradient {
+                padding: 1rem 1.25rem;
+            }
+            
+            .table-responsive {
+                border-radius: 10px;
+            }
+            
+            .table thead th, 
+            .table tbody td {
+                padding: 0.8rem 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .table tbody td img:hover {
+                transform: scale(2.2) rotate(2deg);
             }
             
             .btn-sm {
-                padding: 4px 8px;
-                margin: 1px;
+                padding: 0.35rem 0.6rem;
+                font-size: 0.75rem;
+                margin: 0 1px;
+                min-width: 32px;
             }
             
-            .badge {
-                font-size: 0.7em;
-                padding: 4px 8px;
+            .table tbody td img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .table tbody tr:hover {
+                transform: translateX(2px);
             }
             
-            .form-inline .form-group {
-                margin-bottom: 10px;
-                width: 100%;
+            .table tbody td img:hover {
+                transform: scale(1.8) rotate(2deg);
             }
             
-            .form-inline .form-control {
-                width: 100% !important;
+            .btn[style*="background: linear-gradient(90deg, #6f42c1, #9b59b6)"] {
+                padding: 0.6rem 1.25rem;
             }
         }
-        
-        /* Text alignment for specific columns */
-        .table td:first-child,
-        .table th:first-child {
-            text-align: center;
-        }
-        
-        .table td:nth-child(2),
-        .table td:nth-child(3) {
-            text-align: left;
-        }
-        
-        /* Content Header */
-        .content-header h1 {
-            font-weight: 700;
-            color: #2d3748;
-        }
-        
-        .me-1 {
-            margin-right: 0.25rem !important;
-        }
-        
-        .me-2 {
-            margin-right: 0.5rem !important;
-        }
-        
-        .fw-bold {
-            font-weight: 700 !important;
-        }
-        
-        /* Filter Form Styles */
-        .form-inline .form-group {
-            margin-right: 15px;
-        }
-        
-        .alert-info {
-            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
-            border: none;
-            border-left: 4px solid #4299e1;
-            border-radius: 8px;
-            color: #2c5282;
-        }
-
-           /* ===== STYLING BARU UNTUK SEARCH/FILTER ===== */
-        /* GANTI .form-inline dengan .jabatan-filter */
-.jabatan-filter {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #e3e6f0;
-    margin-bottom: 20px;
-    animation: slideDown 0.5s ease-out;
-}
-
-.jabatan-filter .form-control {
-    border: 2px solid #e2e6ea;
-    border-radius: 8px;
-    padding: 10px 15px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.jabatan-filter .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    transform: translateY(-1px);
-}
-
-/* Juga ganti di responsive */
-@media (max-width: 768px) {
-    .jabatan-filter {
-        padding: 15px;
-    }
-    
-    .jabatan-filter .form-group {
-        margin-bottom: 15px;
-        width: 100%;
-    }
-    /* ... dan seterusnya */
-}
-        /* Form Filter Container */
-        .form-inline {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e3e6f0;
-            margin-bottom: 20px;
-        }
-        
-        
-        .form-inline .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-            transform: translateY(-1px);
-        }
-        
-        /* Select Dropdown */
-        .form-inline select.form-control {
-            background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") no-repeat right 12px center/16px 12px;
-            padding-right: 35px;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-        }
-        
-        /* Tombol Filter */
-        .btn-info {
-            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
-        }
-        
-        .btn-info:hover {
-            background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
-        }
-        
-        /* Tombol Reset */
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
-        }
-        
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
-        }
-        
-        /* Label Group (opsional) */
-        .filter-group {
-            margin-bottom: 15px;
-        }
-        
-        .filter-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        
-        /* Alert Info Filter Aktif */
-        .alert-info {
-            background: linear-gradient(135deg, #d6e4ff 0%, #adc8ff 100%);
-            border: none;
-            border-left: 4px solid #667eea;
-            border-radius: 8px;
-            color: #2d3748;
-            font-weight: 500;
-        }
-        
-        .alert-info .float-right {
-            color: #e53e3e !important;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .alert-info .float-right:hover {
-            color: #c53030 !important;
-            transform: scale(1.05);
-        }
-        
-        /* Pagination Styling */
-        .pagination {
-            margin-bottom: 0;
-        }
-        
-        .page-link {
-            border: 1px solid #e3e6f0;
-            color: #667eea;
-            font-weight: 600;
-            padding: 8px 16px;
-            margin: 0 3px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        
-        .page-link:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: #667eea;
-            color: white;
-            transform: translateY(-1px);
-        }
-        
-        .page-item.active .page-link {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: #667eea;
-            color: white;
-        }
-        
-        /* Info Pagination */
-        .text-muted {
-            color: #6c757d !important;
-            font-weight: 500;
-        }
-        
-        /* Responsive Design untuk Filter */
-        @media (max-width: 768px) {
-            .form-inline {
-                padding: 15px;
-            }
-            
-            .form-inline .form-group {
-                margin-bottom: 15px;
-                width: 100%;
-            }
-            
-            .form-inline .form-control {
-                width: 100% !important;
-                margin-bottom: 10px;
-            }
-            
-            .form-inline .btn {
-                width: 48%;
-                margin-right: 2%;
-                margin-bottom: 10px;
-            }
-            
-            .form-inline .btn:last-child {
-                margin-right: 0;
-            }
-            
-            .filter-group {
-                margin-bottom: 10px;
-            }
-        }
-        
-        /* Animation untuk form */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .form-inline {
-            animation: slideDown 0.5s ease-out;
-        }
-        
-        /* Icon styling dalam input */
-        .input-group-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-        }
-        
-        /* Placeholder styling */
-        .form-control::placeholder {
-            color: #a0aec0;
-            font-style: italic;
-        }
-        
-        /* Focus state untuk semua form elements */
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-    /* Pagination Styling */
-.pagination {
-    margin-bottom: 0;
-    justify-content: center;
-}
-
-.page-link {
-    border: 1px solid #e3e6f0;
-    color: #667eea;
-    font-weight: 600;
-    padding: 8px 16px;
-    margin: 0 3px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.page-link:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.page-item.active .page-link {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
-    color: white;
-    transform: scale(1.05);
-}
-
-.page-item.disabled .page-link {
-    background: #f8f9fa;
-    color: #6c757d;
-    border-color: #e3e6f0;
-}
-
-/* Info Pagination */
-.text-muted {
-    color: #6c757d !important;
-    font-weight: 500;
-}
-
-/* Untuk alignment pagination info */
-.d-flex.justify-content-between.align-items-center {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #e3e6f0;
-}
-
     </style>
- 
-@stop 
+@stop
