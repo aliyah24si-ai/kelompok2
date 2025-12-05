@@ -26,7 +26,7 @@ class PerangkatDesaController extends Controller
             $query->where('warga_id', $filterWarga);
         }
 
-        $items = $query->orderBy('perangkat_id', 'desc')->paginate(10);
+        $items = $query->orderBy('perangkat_id', 'desc')->paginate(5);
         $wargas = Warga::orderBy('nama')->get();
 
         return view('perangkat_desa.index', compact('items', 'search', 'filterWarga', 'wargas'));

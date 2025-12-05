@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="m-0 text-dark">Daftar Jabatan</h1>
-        <a href="{{ route('jabatan.create') }}" class="btn btn-primary">
+        <a href="{{ route('jabatan.create') }}" class="btn btn-primary pd-add-btn">
             <i class="fas fa-plus me-1"></i>Tambah Jabatan
         </a>
     </div>
@@ -25,23 +25,22 @@
         </div>
         
         <div class="card-body">
-            <!-- Filter dan Search Form -->
+            <!-- Ganti bagian form filter ini -->
             <div class="row mb-3">
                 <div class="col-md-12">
-                    <form action="{{ route('jabatan.index') }}" method="GET" class="form-inline">
+                    <form action="{{ route('jabatan.index') }}" method="GET" class="form-inline pd-filter-form">
                         <!-- Search -->
                         <div class="form-group mr-3 mb-2">
                             <input type="text" 
                                    name="search" 
-                                   class="form-control" 
+                                   class="form-control pd-search-input" 
                                    placeholder="Cari nama jabatan..."
-                                   value="{{ request('search') }}"
-                                   style="min-width: 250px;">
+                                   value="{{ request('search') }}">
                         </div>
                         
                         <!-- Filter Lembaga -->
                         <div class="form-group mr-3 mb-2">
-                            <select name="lembaga_id" class="form-control" style="min-width: 200px;">
+                            <select name="lembaga_id" class="form-control pd-select-input">
                                 <option value="">Semua Lembaga</option>
                                 @foreach($lembagas as $lembaga)
                                     <option value="{{ $lembaga->lembaga_id }}" 
@@ -54,7 +53,7 @@
                         
                         <!-- Filter Level -->
                         <div class="form-group mr-3 mb-2">
-                            <select name="level" class="form-control" style="min-width: 150px;">
+                            <select name="level" class="form-control pd-select-input">
                                 <option value="">Semua Level</option>
                                 <option value="Pimpinan" {{ request('level') == 'Pimpinan' ? 'selected' : '' }}>Pimpinan</option>
                                 <option value="Manager" {{ request('level') == 'Manager' ? 'selected' : '' }}>Manager</option>
@@ -64,21 +63,23 @@
                         </div>
                         
                         <!-- Tombol -->
-                        <div class="form-group mb-2">
-                            <button type="submit" class="btn btn-info mr-2">
+                        <div class="form-group mb-2 pd-button-group">
+                            <button type="submit" class="btn btn-info mr-2 pd-btn-filter">
                                 <i class="fas fa-search me-1"></i>Filter
                             </button>
-                            <a href="{{ route('jabatan.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('jabatan.index') }}" class="btn btn-secondary pd-btn-reset">
                                 <i class="fas fa-refresh me-1"></i>Reset
                             </a>
                         </div>
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
 
     <div class="card pd-animated mt-3">
         <div class="card-header pd-gradient">
-            <h5 style="color: white; margin: 0;">Daftar Jabatan ({{ $jabatans->total() }} data)</h5>
+            <h5 style="color: white; margin: 0;">Daftar Jabatan </h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -148,54 +149,212 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
-@if($jabatans->hasPages())
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <div class="text-muted">
-        Menampilkan {{ $jabatans->firstItem() ?? 0 }} - {{ $jabatans->lastItem() ?? 0 }} dari {{ $jabatans->total() }} data
-    </div>
-    <div>
-        <nav>
-            <ul class="pagination" style="margin-bottom: 0 !important; justify-content: center !important;">
-                {{-- Previous Page Link --}}
-                @if ($jabatans->onFirstPage())
-                    <li class="page-item disabled" aria-disabled="true">
-                        <span class="page-link" style="border: 1px solid #e3e6f0 !important; color: #667eea !important; font-weight: 600 !important; padding: 8px 16px !important; margin: 0 3px !important; border-radius: 6px !important; background: white !important;">«</span>
-                    </li>
-                @else
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $jabatans->previousPageUrl() }}" rel="prev" style="border: 1px solid #e3e6f0 !important; color: #667eea !important; font-weight: 600 !important; padding: 8px 16px !important; margin: 0 3px !important; border-radius: 6px !important; background: white !important; text-decoration: none !important;">«</a>
-                    </li>
-                @endif
+            <!-- Pagination dengan CSS Inline -->
+            @if($jabatans->hasPages())
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div class="text-muted">
+                    Menampilkan {{ $jabatans->firstItem() ?? 0 }} - {{ $jabatans->lastItem() ?? 0 }} dari {{ $jabatans->total() }} data
+                </div>
+                <div>
+                    <nav>
+                        <ul class="pagination mb-0">
+                            {{-- Previous Page Link --}}
+                            @if ($jabatans->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #a0aec0;
+                                        font-weight: 600;
+                                        background: white;
+                                        cursor: not-allowed;
+                                    ">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $jabatans->previousPageUrl() }}" rel="prev" style="
+                                        border: 2px solid #8b5cf6;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            @endif
 
-                {{-- Pagination Elements --}}
-                @foreach ($jabatans->links()->elements[0] as $page => $url)
-                    @if ($page == $jabatans->currentPage())
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; border: 1px solid #667eea !important; color: white !important; font-weight: 600 !important; padding: 8px 16px !important; margin: 0 3px !important; border-radius: 6px !important;">{{ $page }}</span>
-                        </li>
-                    @else
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $url }}" style="border: 1px solid #e3e6f0 !important; color: #667eea !important; font-weight: 600 !important; padding: 8px 16px !important; margin: 0 3px !important; border-radius: 6px !important; background: white !important; text-decoration: none !important;">{{ $page }}</a>
-                        </li>
-                    @endif
-                @endforeach
+                            {{-- Pagination Elements --}}
+                            @php
+                                $current = $jabatans->currentPage();
+                                $last = $jabatans->lastPage();
+                                $start = max(1, $current - 2);
+                                $end = min($last, $current + 2);
+                                
+                                if($end - $start < 4) {
+                                    if($start == 1) {
+                                        $end = min(5, $last);
+                                    } else {
+                                        $start = max(1, $last - 4);
+                                    }
+                                }
+                            @endphp
 
-                {{-- Next Page Link --}}
-                @if ($jabatans->hasMorePages())
-                    <li class="page-item">
-                        <a class="page-link" href="{{ $jabatans->nextPageUrl() }}" rel="next" style="border: 1px solid #e3e6f0 !important; color: #667eea !important; font-weight: 600 !important; padding: 8px 16px !important; margin: 0 3px !important; border-radius: 6px !important; background: white !important; text-decoration: none !important;">»</a>
-                    </li>
-                @else
-                    <li class="page-item disabled" aria-disabled="true">
-                        <span class="page-link" style="border: 1px solid #e3e6f0 !important; color: #667eea !important; font-weight: 600 !important; padding: 8px 16px !important; margin: 0 3px !important; border-radius: 6px !important; background: white !important;">»</span>
-                    </li>
-                @endif
-            </ul>
-        </nav>
-    </div>
-</div>
-@endif
+                            @if($start > 1)
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $jabatans->url(1) }}" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        1
+                                    </a>
+                                </li>
+                                @if($start > 2)
+                                    <li class="page-item disabled">
+                                        <span class="page-link" style="
+                                            border: 2px solid #e2e8f0;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: #a0aec0;
+                                            font-weight: 600;
+                                            background: white;
+                                            cursor: default;
+                                        ">
+                                            ...
+                                        </span>
+                                    </li>
+                                @endif
+                            @endif
+
+                            @for ($page = $start; $page <= $end; $page++)
+                                @if ($page == $jabatans->currentPage())
+                                    <li class="page-item active">
+                                        <span class="page-link" style="
+                                            border: 2px solid #8b5cf6;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: white;
+                                            font-weight: 600;
+                                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                                            cursor: default;
+                                        ">
+                                            {{ $page }}
+                                        </span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $jabatans->url($page) }}" style="
+                                            border: 2px solid #e2e8f0;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: #8b5cf6;
+                                            font-weight: 600;
+                                            background: white;
+                                            text-decoration: none;
+                                            transition: all 0.3s ease;
+                                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                            {{ $page }}
+                                        </a>
+                                    </li>
+                                @endif
+                            @endfor
+
+                            @if($end < $last)
+                                @if($end < $last - 1)
+                                    <li class="page-item disabled">
+                                        <span class="page-link" style="
+                                            border: 2px solid #e2e8f0;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: #a0aec0;
+                                            font-weight: 600;
+                                            background: white;
+                                            cursor: default;
+                                        ">
+                                            ...
+                                        </span>
+                                    </li>
+                                @endif
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $jabatans->url($last) }}" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        {{ $last }}
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Next Page Link --}}
+                            @if ($jabatans->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $jabatans->nextPageUrl() }}" rel="next" style="
+                                        border: 2px solid #8b5cf6;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #a0aec0;
+                                        font-weight: 600;
+                                        background: white;
+                                        cursor: not-allowed;
+                                    ">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 @stop
@@ -226,6 +385,116 @@
             100% { transform: scale(1); }
         }
 
+        /* ===== HEADER CARD TITLE - PERBAIKAN ===== */
+        .pd-gradient h5 {
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            font-size: 1.05rem;
+        }
+
+        .pd-gradient {
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 50%, var(--purple-dark) 100%);
+            border-bottom: none;
+            padding: 1rem 1.5rem; /* Sedikit lebih kecil */
+            color: white;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== FORM FILTER - PERBAIKAN UTAMA ===== */
+        .pd-filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .pd-filter-form .form-group {
+            margin-bottom: 0 !important;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .pd-search-input, .pd-select-input {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8fafc;
+        }
+
+        .pd-search-input:focus, .pd-select-input:focus {
+            border-color: var(--purple-light);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        .pd-button-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            min-width: 200px;
+        }
+
+        .pd-btn-filter, .pd-btn-reset {
+            border-radius: 10px;
+            padding: 0.65rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .pd-btn-filter {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+            color: white;
+        }
+
+        .pd-btn-reset {
+            background: linear-gradient(135deg, #A0AEC0 0%, #718096 100%);
+            color: white;
+        }
+
+        .pd-btn-filter:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(45, 212, 191, 0.35);
+        }
+
+        .pd-btn-reset:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(113, 128, 150, 0.35);
+        }
+
+        /* ===== TOMBOL TAMBAH ===== */
+        .pd-add-btn {
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 1.75rem !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pd-add-btn:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5) !important;
+            animation: pulse 1s infinite !important;
+        }
+
         /* ===== CARD ===== */
         .pd-animated {
             border: none;
@@ -241,17 +510,6 @@
         .pd-animated:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-purple);
-        }
-
-        /* ===== HEADER CARD ===== */
-        .pd-gradient {
-            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 50%, var(--purple-dark) 100%);
-            border-bottom: none;
-            padding: 1.25rem 1.5rem;
-            color: white;
-            font-size: 1.1rem;
-            position: relative;
-            overflow: hidden;
         }
 
         .pd-gradient::before {
@@ -272,86 +530,6 @@
             left: 100%;
         }
 
-        .pd-gradient h5 {
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            margin: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ===== TOMBOL TAMBAH ===== */
-        .btn[style*="background: linear-gradient(90deg, #6f42c1, #9b59b6)"] {
-            border: none;
-            border-radius: 12px;
-            padding: 0.75rem 1.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%) !important;
-            color: white;
-            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn[style*="background: linear-gradient(90deg, #6f42c1, #9b59b6)"]:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
-            animation: pulse 1s infinite;
-        }
-
-        /* ===== FORM INPUT ===== */
-        .form-control {
-            border: 2px solid #E2E8F0;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #f8fafc;
-        }
-
-        .form-control:focus {
-            border-color: var(--purple-light);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
-            outline: none;
-            transform: translateY(-2px);
-        }
-
-        /* ===== CUSTOM BUTTONS ===== */
-        .pd-btn {
-            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.65rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-        }
-
-        .pd-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
-            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
-        }
-
-        .btn-outline-secondary {
-            border: 2px solid #CBD5E0;
-            color: #4A5568;
-            border-radius: 10px;
-            padding: 0.65rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .btn-outline-secondary:hover {
-            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%);
-            color: white;
-            transform: translateY(-3px);
-            border-color: #4A5568;
-        }
-
         /* ===== TABLE ===== */
         .table-responsive {
             border-radius: 14px;
@@ -361,7 +539,7 @@
             box-shadow: var(--shadow-light);
         }
 
-        /* TABLE HEADER - Gradien teal yang fresh */
+        /* TABLE HEADER */
         .table thead {
             background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
             position: relative;
@@ -405,28 +583,6 @@
             transition: all 0.2s ease;
         }
 
-        /* ===== FOTO ANIMASI ===== */
-        .table tbody td img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 3px solid rgba(139, 92, 246, 0.2);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .table tbody td img:hover {
-            transform: scale(3) rotate(2deg);
-            z-index: 100;
-            position: relative;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.2),
-                0 0 0 8px rgba(139, 92, 246, 0.1);
-            border: 3px solid var(--purple);
-        }
-
         /* ===== BADGE ===== */
         .badge {
             padding: 0.4rem 0.8rem;
@@ -458,110 +614,21 @@
             min-width: 36px;
         }
 
-        .btn-outline-primary {
-            background: transparent;
-            border: 2px solid #4299E1;
-            color: #4299E1;
-        }
-
-        .btn-outline-primary:hover {
-            background: linear-gradient(135deg, #4299E1 0%, #3182ce 100%);
-            color: white;
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 6px 15px rgba(66, 153, 225, 0.3);
-        }
-
-        .pd-btn.btn-sm {
-            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%);
-            color: white;
-            border: none;
-        }
-
-        .pd-btn.btn-sm:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 6px 15px rgba(139, 92, 246, 0.3);
-            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
-        }
-
-        .btn-outline-danger {
-            background: transparent;
-            border: 2px solid #FC8181;
-            color: #FC8181;
-        }
-
-        .btn-outline-danger:hover {
-            background: linear-gradient(135deg, #FC8181 0%, #F56565 100%);
-            color: white;
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 6px 15px rgba(245, 101, 101, 0.3);
-        }
-
-        /* ===== NO DATA ===== */
-        .text-muted {
-            color: #94A3B8;
-            font-size: 1.1rem;
-            text-align: center;
-            padding: 3rem;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .text-muted i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-            color: var(--purple-light);
-            animation: pulse 2s infinite;
-        }
-
-        /* ===== ALERT ===== */
-        .alert-success {
-            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
-            color: #065F46;
-            border: 2px solid #34D399;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            animation: fadeIn 0.5s ease-out;
-            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.2);
-        }
-
-        .alert-success i {
-            color: #10B981;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* ===== PAGINATION ===== */
-        .pagination {
-            justify-content: center;
-            margin-top: 25px;
-        }
-
-        .page-link {
-            border: 1px solid #E2E8F0;
-            color: var(--purple);
-            border-radius: 8px;
-            margin: 0 4px;
-            transition: all 0.3s ease;
-            padding: 0.6rem 1rem;
-            font-weight: 600;
-        }
-
-        .page-item.active .page-link {
-            background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%);
-            border-color: var(--purple);
-            color: white;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-        }
-
-        .page-link:hover {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
-            color: var(--purple-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.15);
-        }
-
         /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .pd-filter-form {
+                gap: 10px;
+            }
+            
+            .pd-filter-form .form-group {
+                min-width: 150px;
+            }
+            
+            .pd-button-group {
+                min-width: 180px;
+            }
+        }
+
         @media (max-width: 768px) {
             .pd-animated {
                 border-radius: 12px;
@@ -569,7 +636,22 @@
             }
             
             .pd-gradient {
-                padding: 1rem 1.25rem;
+                padding: 0.875rem 1.25rem;
+            }
+            
+            .pd-filter-form {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .pd-filter-form .form-group {
+                min-width: 100% !important;
+                width: 100% !important;
+            }
+            
+            .pd-button-group {
+                min-width: 100%;
+                justify-content: flex-start;
             }
             
             .table-responsive {
@@ -582,34 +664,32 @@
                 font-size: 0.85rem;
             }
             
-            .table tbody td img:hover {
-                transform: scale(2.2) rotate(2deg);
-            }
-            
             .btn-sm {
                 padding: 0.35rem 0.6rem;
                 font-size: 0.75rem;
                 margin: 0 1px;
                 min-width: 32px;
             }
-            
-            .table tbody td img {
-                width: 50px;
-                height: 50px;
-            }
         }
 
         @media (max-width: 576px) {
-            .table tbody tr:hover {
-                transform: translateX(2px);
+            .pd-gradient h5 {
+                font-size: 0.95rem;
             }
             
-            .table tbody td img:hover {
-                transform: scale(1.8) rotate(2deg);
+            .pd-add-btn {
+                padding: 0.6rem 1.25rem !important;
+                font-size: 0.9rem !important;
             }
             
-            .btn[style*="background: linear-gradient(90deg, #6f42c1, #9b59b6)"] {
-                padding: 0.6rem 1.25rem;
+            .pd-button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .pd-btn-filter, .pd-btn-reset {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>

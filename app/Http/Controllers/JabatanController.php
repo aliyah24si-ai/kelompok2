@@ -28,7 +28,7 @@ class JabatanController extends Controller
             $query->where('level', $request->level);
         }
         
-        $jabatans = $query->paginate(10);
+        $jabatans = $query->paginate(5);
         $lembagas = LembagaDesa::all();
         
         return view('jabatan.index', compact('jabatans', 'lembagas'))

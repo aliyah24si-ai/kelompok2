@@ -1,3 +1,4 @@
+
 @extends('adminlte::page')
 
 @section('title', 'Perangkat Desa')
@@ -5,7 +6,7 @@
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <h1 class="m-0">Perangkat Desa</h1>
-        <a href="{{ route('perangkat_desa.create') }}" class="btn" style="background: linear-gradient(90deg, #6f42c1, #9b59b6); color: white;">
+        <a href="{{ route('perangkat_desa.create') }}" class="btn pd-add-btn">
             <i class="fas fa-plus"></i> Tambah
         </a>
     </div>
@@ -57,7 +58,7 @@
 
     <div class="card pd-animated mt-3">
         <div class="card-header pd-gradient d-flex justify-content-between align-items-center">
-            <h5 style="color: white; margin: 0;">Daftar Perangkat Desa ({{ $items->total() }} data)</h5>
+            <h5 style="color: white; margin: 0;">Daftar Perangkat Desa({{ $items->total() }} data)</h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -125,11 +126,209 @@
                 </table>
             </div>
 
+            <!-- PAGINATION DENGAN CSS INLINE -->
+            @if($items->hasPages())
             <div class="row mt-4">
                 <div class="col-md-12 d-flex justify-content-center">
-                    {{ $items->appends(request()->query())->links() }}
+                    <nav>
+                        <ul class="pagination mb-0">
+                            {{-- Previous Page Link --}}
+                            @if ($items->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #a0aec0;
+                                        font-weight: 600;
+                                        background: white;
+                                        cursor: not-allowed;
+                                    ">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $items->previousPageUrl() }}" style="
+                                        border: 2px solid #8b5cf6;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @php
+                                $current = $items->currentPage();
+                                $last = $items->lastPage();
+                                $start = max(1, $current - 2);
+                                $end = min($last, $current + 2);
+                                
+                                if($end - $start < 4) {
+                                    if($start == 1) {
+                                        $end = min(5, $last);
+                                    } else {
+                                        $start = max(1, $last - 4);
+                                    }
+                                }
+                            @endphp
+
+                            @if($start > 1)
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $items->url(1) }}" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        1
+                                    </a>
+                                </li>
+                                @if($start > 2)
+                                    <li class="page-item disabled">
+                                        <span class="page-link" style="
+                                            border: 2px solid #e2e8f0;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: #a0aec0;
+                                            font-weight: 600;
+                                            background: white;
+                                            cursor: default;
+                                        ">
+                                            ...
+                                        </span>
+                                    </li>
+                                @endif
+                            @endif
+
+                            @for ($page = $start; $page <= $end; $page++)
+                                @if ($page == $items->currentPage())
+                                    <li class="page-item active">
+                                        <span class="page-link" style="
+                                            border: 2px solid #8b5cf6;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: white;
+                                            font-weight: 600;
+                                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                                            cursor: default;
+                                        ">
+                                            {{ $page }}
+                                        </span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $items->url($page) }}" style="
+                                            border: 2px solid #e2e8f0;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: #8b5cf6;
+                                            font-weight: 600;
+                                            background: white;
+                                            text-decoration: none;
+                                            transition: all 0.3s ease;
+                                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                            {{ $page }}
+                                        </a>
+                                    </li>
+                                @endif
+                            @endfor
+
+                            @if($end < $last)
+                                @if($end < $last - 1)
+                                    <li class="page-item disabled">
+                                        <span class="page-link" style="
+                                            border: 2px solid #e2e8f0;
+                                            border-radius: 10px;
+                                            margin: 0 4px;
+                                            padding: 8px 16px;
+                                            color: #a0aec0;
+                                            font-weight: 600;
+                                            background: white;
+                                            cursor: default;
+                                        ">
+                                            ...
+                                        </span>
+                                    </li>
+                                @endif
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $items->url($last) }}" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        {{ $last }}
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Next Page Link --}}
+                            @if ($items->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $items->nextPageUrl() }}" style="
+                                        border: 2px solid #8b5cf6;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #8b5cf6;
+                                        font-weight: 600;
+                                        background: white;
+                                        text-decoration: none;
+                                        transition: all 0.3s ease;
+                                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.2)';" 
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" style="
+                                        border: 2px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        margin: 0 4px;
+                                        padding: 8px 16px;
+                                        color: #a0aec0;
+                                        font-weight: 600;
+                                        background: white;
+                                        cursor: not-allowed;
+                                    ">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 @stop
