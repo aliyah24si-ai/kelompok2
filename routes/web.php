@@ -34,6 +34,8 @@ Route::middleware([CheckIsLogin::class])->group(function () {
     Route::middleware([CheckRole::class . ':admin'])->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('wargas', WargaController::class);
+        Route::delete('wargas/{warga}/warga-files/{file}', [WargaController::class, 'deleteFile'])
+            ->name('wargas.warga-files.destroy');
         Route::resource('lembaga', LembagaDesaController::class);
         Route::resource('jabatan', JabatanController::class);
         Route::resource('perangkat_desa', \App\Http\Controllers\PerangkatDesaController::class);

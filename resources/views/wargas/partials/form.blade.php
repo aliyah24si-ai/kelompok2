@@ -169,11 +169,11 @@
                     <i class="fas fa-info-circle me-1"></i>PDF/JPG/PNG, maks 5 MB per file
                 </div>
 
-                @if(isset($warga) && $warga->files->count())
+                @if(isset($warga) && $warga->wargaFiles->count())
                     <div class="document-list">
                         <div class="document-title">Dokumen Tersimpan</div>
                         <ul class="document-items">
-                            @foreach($warga->files as $file)
+                            @foreach($warga->wargaFiles as $file)
                                 <li class="document-item">
                                     <div class="document-info">
                                         <i class="fas fa-paperclip me-2"></i>

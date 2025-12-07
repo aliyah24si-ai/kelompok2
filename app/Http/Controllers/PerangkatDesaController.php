@@ -43,11 +43,14 @@ class PerangkatDesaController extends Controller
         $data = $request->validate([
             'warga_id' => 'required|exists:wargas,warga_id',
             'jabatan' => 'required|string|max:191',
-            'nip' => 'nullable|string|max:100',
-            'kontak' => 'nullable|string|max:100',
+            'nip' => 'nullable|string|max:100|unique:perangkat_desa,nip',
+            'kontak' => 'nullable|string|max:100|unique:perangkat_desa,kontak',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'nullable|date|after_or_equal:periode_mulai',
             'foto' => 'nullable|image|max:2048',
+        ], [
+            'nip.unique' => 'NIP sudah digunakan!',
+            'kontak.unique' => 'Kontak sudah digunakan!',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -76,11 +79,14 @@ class PerangkatDesaController extends Controller
         $data = $request->validate([
             'warga_id' => 'required|exists:wargas,warga_id',
             'jabatan' => 'required|string|max:191',
-            'nip' => 'nullable|string|max:100',
-            'kontak' => 'nullable|string|max:100',
+            'nip' => 'nullable|string|max:100|unique:perangkat_desa,nip,' . $perangkat_desa->perangkat_id . ',perangkat_id',
+            'kontak' => 'nullable|string|max:100|unique:perangkat_desa,kontak,' . $perangkat_desa->perangkat_id . ',perangkat_id',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'nullable|date|after_or_equal:periode_mulai',
             'foto' => 'nullable|image|max:2048',
+        ], [
+            'nip.unique' => 'NIP sudah digunakan!',
+            'kontak.unique' => 'Kontak sudah digunakan!',
         ]);
 
         if ($request->hasFile('foto')) {

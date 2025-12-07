@@ -27,7 +27,7 @@
                 </div>
                 <div class="card-body">
                     @php
-                        $files = $warga->files ?? collect();
+                        $files = $warga->wargaFiles ?? collect();
                         $fileCount = is_object($files) ? $files->count() : (is_array($files) ? count($files) : 0);
                     @endphp
                     

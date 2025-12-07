@@ -23,39 +23,28 @@
     @endif
 
     <div class="card pd-animated">
-        <div class="card-header pd-gradient">
-            <h5 style="color: white; margin: 0;">Pencarian & Filter Perangkat Desa</h5>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('perangkat_desa.index') }}" method="GET">
-                <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <input type="text" name="search" class="form-control" placeholder="Cari nama warga atau jabatan..." 
-                               value="{{ request('search') }}" style="border-left: 4px solid #6f42c1;">
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <select name="warga_id" class="form-control" style="border-left: 4px solid #6f42c1;">
-                            <option value="">-- Semua Warga --</option>
-                            @foreach($wargas as $w)
-                                <option value="{{ $w->warga_id }}" {{ request('warga_id') == $w->warga_id ? 'selected' : '' }}>
-                                    {{ $w->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <button type="submit" class="btn pd-btn btn-block">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                        <a href="{{ route('perangkat_desa.index') }}" class="btn btn-outline-secondary btn-block mt-1">
-                            <i class="fas fa-redo"></i> Reset
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
+    <div class="card-header pd-gradient">
+        <h5 style="color: white; margin: 0;">Pencarian Perangkat Desa</h5>
     </div>
-
+    <div class="card-body">
+        <form action="{{ route('perangkat_desa.index') }}" method="GET">
+            <div class="row align-items-center">
+                <div class="col-md-8 mb-2">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama warga atau jabatan..." 
+                           value="{{ request('search') }}" style="border-left: 4px solid #6f42c1;">
+                </div>
+                <div class="col-md-4 mb-2 d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn pd-btn">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                    <a href="{{ route('perangkat_desa.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
     <div class="card pd-animated mt-3">
         <div class="card-header pd-gradient d-flex justify-content-between align-items-center">
             <h5 style="color: white; margin: 0;">Daftar Perangkat Desa({{ $items->total() }} data)</h5>

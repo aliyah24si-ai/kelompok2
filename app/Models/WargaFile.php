@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class WargaFile extends Model
 {
@@ -20,6 +21,7 @@ class WargaFile extends Model
     protected $appends = [
         'file_url',
         'readable_size',
+        'file_icon',
     ];
 
     public function warga()
@@ -29,7 +31,11 @@ class WargaFile extends Model
 
     public function getFileUrlAttribute(): string
     {
-        return asset('storage/' . $this->file_path);
+        if ($this->file_path && Storage::disk('public')->exists($this->file_path)) {
+            return Storage::disk('public')->url($this->file_path);
+        }
+        
+        return '#';
     }
 
     public function getReadableSizeAttribute(): string
@@ -49,6 +55,41 @@ class WargaFile extends Model
 
         return number_format($size, $index === 0 ? 0 : 2) . ' ' . $units[$index];
     }
+
+    public function getFileIconAttribute(): string
+    {
+        $mime = strtolower($this->mime_type);
+        $extension = strtolower(pathinfo($this->original_name, PATHINFO_EXTENSION));
+        
+        // Cek berdasarkan mime type
+        if (str_contains($mime, 'pdf')) {
+            return 'fas fa-file-pdf text-danger';
+        }
+        
+        if (str_contains($mime, 'word') || in_array($extension, ['doc', 'docx'])) {
+            return 'fas fa-file-word text-primary';
+        }
+        
+        if (str_contains($mime, 'excel') || in_array($extension, ['xls', 'xlsx'])) {
+            return 'fas fa-file-excel text-success';
+        }
+        
+        if (str_contains($mime, 'image') || in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+            return 'fas fa-file-image text-warning';
+        }
+        
+        return 'fas fa-file text-secondary';
+    }
+
+    /**
+     * Check if file is image
+     */
+    public function getIsImageAttribute(): bool
+    {
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        $extension = strtolower(pathinfo($this->original_name, PATHINFO_EXTENSION));
+        
+        return in_array($extension, $imageExtensions) || 
+               str_contains(strtolower($this->mime_type), 'image');
+    }
 }
-
-

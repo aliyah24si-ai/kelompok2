@@ -19,7 +19,7 @@ return new class extends Migration
         $table->enum('jenis_kelamin', ['L', 'P']);
         $table->string('agama', 20);
         $table->string('pekerjaan', 50);
-        $table->string('telp', 15)->nullable();
+        $table->string('telp', 20)->nullable();
         $table->string('email', 100)->nullable();
         $table->timestamps();
     });
