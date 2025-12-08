@@ -6,8 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\LembagaDesaController;
 use App\Http\Controllers\JabatanController;
-use App\Http\Middleware\CheckIsLogin;
-use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -22,16 +21,15 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
-Route::middleware([CheckIsLogin::class])->group(function () {
-    Route::get('/dashboard', function () {
-        return redirect()->route('wargas.index');
-    })->name('dashboard');
+Route::middleware(['checklogin'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     Route::get('/profile', function () {
         return view('profile');
     })->name('profile');
 
-    Route::middleware([CheckRole::class . ':admin'])->group(function () {
+    Route::middleware(['checkrole:Admin'])->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('wargas', WargaController::class);
         Route::delete('wargas/{warga}/warga-files/{file}', [WargaController::class, 'deleteFile'])

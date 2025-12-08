@@ -73,7 +73,7 @@
                                     <i class="fas fa-user-shield"></i> Admin
                                 </option>
                                 <option value="Pelanggan" {{ old('role') === 'Pelanggan' ? 'selected' : '' }}>
-                                    <i class="fas fa-user"></i> Pelanggan
+                                    <i class="fas fa-user"></i> Warga
                                 </option>
                             </select>
                             @error('role')

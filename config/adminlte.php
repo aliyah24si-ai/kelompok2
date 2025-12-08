@@ -309,6 +309,12 @@ return [
 
         // HEADER UNTUK DATA DESA
         ['header' => 'DATA DESA'],
+[
+            'text'   => 'Dashboard',
+            'url'    => 'dashboard',
+            'icon'   => 'fas fa-tachometer-alt',
+            'active' => ['dashboard*'],
+        ],
 
         [
             'text'   => 'Data Warga',
