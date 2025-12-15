@@ -31,8 +31,12 @@ class WargaFile extends Model
 
     public function getFileUrlAttribute(): string
     {
-        if ($this->file_path && Storage::disk('public')->exists($this->file_path)) {
-            return Storage::disk('public')->url($this->file_path);
+        if ($this->file_path) {
+            // Cek apakah file ada di storage
+            $storagePath = storage_path('app/public/' . $this->file_path);
+            if (file_exists($storagePath)) {
+                return route('wargas.files.serve', $this->id);
+            }
         }
         
         return '#';

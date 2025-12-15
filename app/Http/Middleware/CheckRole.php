@@ -23,7 +23,7 @@ class CheckRole
 
         $userRole = Auth::user()->role ?? User::PELANGGAN;
 
-        // Compare roles case-insensitively to avoid mismatches like 'Admin' vs 'admin'
+       
         $normalizedUserRole = strtolower($userRole);
         $normalizedRoles = array_map('strtolower', $roles);
 

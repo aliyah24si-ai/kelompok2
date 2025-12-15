@@ -23,4 +23,12 @@ class LembagaDesa extends Model
     {
         return $this->hasMany(Jabatan::class, 'lembaga_id', 'lembaga_id');
     }
+
+    /**
+     * Relasi ke Anggota Lembaga
+     */
+    public function anggotaLembaga()
+    {
+        return $this->hasMany(AnggotaLembaga::class, 'lembaga_id', 'lembaga_id');
+    }
 }

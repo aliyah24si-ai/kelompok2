@@ -9,10 +9,40 @@ class LembagaDesaController extends Controller
 {
     
 
-    public function index()
+    public function index(Request $request)
     {
-        $lembaga_desas = LembagaDesa::latest()->paginate(10);
-        return view('lembaga_desas.index', compact('lembaga_desas'));
+        $query = LembagaDesa::query();
+        
+        
+        if ($request->filled('q')) {
+            $searchTerm = $request->q;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_lembaga', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('kontak', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        
+        // Filter by kontak (has contact or no contact)
+        if ($request->filled('has_kontak')) {
+            if ($request->has_kontak === 'yes') {
+                $query->whereNotNull('kontak')->where('kontak', '!=', '');
+            } elseif ($request->has_kontak === 'no') {
+                $query->where(function ($q) {
+                    $q->whereNull('kontak')->orWhere('kontak', '');
+                });
+            }
+        }
+        
+        $lembaga_desas = $query->latest()->paginate(5);
+        
+      
+        $kontakOptions = [
+            'yes' => 'Ada Kontak',
+            'no' => 'Tidak Ada Kontak'
+        ];
+        
+        return view('lembaga_desas.index', compact('lembaga_desas', 'kontakOptions'));
     }
 
     public function create()
@@ -35,6 +65,7 @@ class LembagaDesaController extends Controller
 
     public function show(LembagaDesa $lembaga) // UBAH: $lembagaDesa → $lembaga
     {
+        $lembaga->load(['anggotaLembaga.warga', 'anggotaLembaga.jabatan']);
         return view('lembaga_desas.show', compact('lembaga'));
     }
 

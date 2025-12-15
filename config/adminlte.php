@@ -343,6 +343,27 @@ return [
             'can'    => 'isAdmin',
         ],
 
+        [
+            'text'   => 'Data RW',
+            'url'    => 'rw',
+            'icon'   => 'fas fa-map-marked-alt',
+            'active' => ['rw*'],
+        ],
+
+        [
+            'text'   => 'Data RT',
+            'url'    => 'rt',
+            'icon'   => 'fas fa-map-marker-alt',
+            'active' => ['rt*'],
+        ],
+
+        [
+            'text'   => 'Anggota Lembaga',
+            'url'    => 'anggota-lembaga',
+            'icon'   => 'fas fa-users-cog',
+            'active' => ['anggota-lembaga*'],
+        ],
+
         // HEADER UNTUK PENGATURAN
         ['header' => 'PENGATURAN'],
 
@@ -357,70 +378,71 @@ return [
 
         [
             'text' => 'profile',
-            'url'  => 'admin/settings',
+            'url'  => 'profile',
             'icon' => 'fas fa-fw fa-user',
+             'active' => ['profile*'],
         ],
-        [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
+        //[
+          //  'text' => 'change_password',
+           // 'url'  => 'admin/settings',
+           // 'icon' => 'fas fa-fw fa-lock',
         ],
 
         // ... menu lainnya tetap
 
-        [
-            'text' => 'blog',
-            'url'  => 'admin/blog',
-            'can'  => 'manage-blog',
-        ],
-        [
-            'text'        => 'pages',
-            'url'         => 'admin/pages',
-            'icon'        => 'far fa-fw fa-file',
-            'label'       => 4,
-            'label_color' => 'success',
-        ],
+       // [
+            //'text' => 'blog',
+            //'url'  => 'admin/blog',
+            //'can'  => 'manage-blog',
+       // ],
+        //[
+            //'text'        => 'pages',
+            //'url'         => 'admin/pages',
+            //'icon'        => 'far fa-fw fa-file',
+            //'label'       => 4,
+           // 'label_color' => 'success',
+       // ],
 
-        [
-            'text'    => 'multilevel',
-            'icon'    => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url'  => '#',
-                ],
-                [
-                    'text'    => 'level_one',
-                    'url'     => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url'  => '#',
-                        ],
-                        [
-                            'text'    => 'level_two',
-                            'url'     => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url'  => '#',
-                ],
-            ],
-        ],
+       // [
+           // 'text'    => 'multilevel',
+           // 'icon'    => 'fas fa-fw fa-share',
+           // 'submenu' => [
+              //  [
+                  //  'text' => 'level_one',
+                   // 'url'  => '#',
+                //],
+                //[
+                 //   'text'    => 'level_one',
+                  //  'url'     => '#',
+                   // 'submenu' => [
+                        //[
+                          //  'text' => 'level_two',
+                          //  'url'  => '#',
+                        //],
+                        //[
+                            //'text'    => 'level_two',
+                            //'url'     => '#',
+                            //'submenu' => [
+                               // [
+                                   // 'text' => 'level_three',
+                                    //'url'  => '#',
+                              //  ],
+                               // [
+                                    //'text' => 'level_three',
+                                    //'url'  => '#',
+                                //],
+                           // ],
+                        //],
+                  //  ],
+               // ],
+               // [
+                //    'text' => 'level_one',
+                   // 'url'  => '#',
+                //],
+           // ],
+        //],
        
-    ],
+   // ],
 
     /*
     |--------------------------------------------------------------------------

@@ -31,6 +31,14 @@ class Warga extends Model
     ];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'warga_id';
+    }
+
+    /**
      * Columns that are searchable via scopeSearch
      */
     protected $searchableColumns = ['nama', 'no_ktp', 'email', 'pekerjaan', 'telp'];
@@ -78,12 +86,11 @@ class Warga extends Model
      */
     public function getFotoProfilUrlAttribute()
     {
-        if ($this->foto_profil_path && Storage::disk('public')->exists($this->foto_profil_path)) {
-            return Storage::disk('public')->url($this->foto_profil_path);
+        if ($this->foto_profil_path && file_exists(storage_path('app/public/' . $this->foto_profil_path))) {
+            return asset('storage/' . $this->foto_profil_path);
         }
         
-        // Fallback ke default avatar
-        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIyNCIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzQ4XzQ4KSIvPjxwYXRoIGQ9Ik0yNCAyOEMyNy44NjYgMjggMzEgMjQuODY2IDMxIDIxQzMxIDE3LjEzNCAyNy44NjYgMTQgMjQgMTRDMjAuMTM0IDE0IDE3IDE3LjEzNCAxNyAyMUMxNyAyNC44NjYgMjAuMTM0IDI4IDI0IDI4WiIgZmlsbD0id2hpdGUiLz48cGF0aCBkPSJNMzYgMzRDNDAuNDE4MyAzNCA0NCAzMC40MTgzIDQ0IDI2QzQ0IDIxLjU4MTcgNDAuNDE4MyAxOCAzNiAxOEMzMS41ODE3IDE4IDI4IDIxLjU4MTcgMjggMjZDMjggMzAuNDE4MyAzMS41ODE3IDM0IDM2IDM0WiIgZmlsbD0id2hpdGUiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfNDhfNDgiIHgxPSIyNCIgeTE9IjAiIHgyPSIyNCIgeTI9IjQ4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc2NEJBMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==';
+        return null;
     }
 
     /**

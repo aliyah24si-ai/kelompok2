@@ -288,4 +288,27 @@ class WargaController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Serve file directly from storage
+     */
+    public function serveFile($fileId)
+    {
+        try {
+            $file = \App\Models\WargaFile::findOrFail($fileId);
+            $filePath = storage_path('app/public/' . $file->file_path);
+            
+            if (!file_exists($filePath)) {
+                abort(404, 'File not found');
+            }
+            
+            return response()->file($filePath, [
+                'Content-Type' => $file->mime_type,
+                'Content-Disposition' => 'inline; filename="' . $file->original_name . '"'
+            ]);
+            
+        } catch (\Exception $e) {
+            abort(404, 'File not found');
+        }
+    }
 }

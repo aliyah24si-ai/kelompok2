@@ -95,9 +95,14 @@
                         <tr>
                             <td class="text-center">
                                 <div class="table-avatar">
-                                    @if($item->foto_profil_path && file_exists(public_path('storage/'.$item->foto_profil_path)))
-                                        <img src="{{ asset('storage/'.$item->foto_profil_path) }}" alt="{{ $item->nama }}" 
-                                             onerror="this.onerror=null;this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIyNCIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzQ4XzQ4KSIvPjxwYXRoIGQ9Ik0yNCAyOEMyNy44NjYgMjggMzEgMjQuODY2IDMxIDIxQzMxIDE3LjEzNCAyNy44NjYgMTQgMjQgMTRDMjAuMTM0IDE0IDE3IDE3LjEzNCAxNyAyMUMxNyAyNC44NjYgMjAuMTM0IDI4IDI0IDI4WiIgZmlsbD0id2hpdGUiLz48cGF0aCBkPSJNMzYgMzRDNDAuNDE4MyAzNCA0NCAzMC40MTgzIDQ0IDI2QzQ0IDIxLjU4MTcgNDAuNDE4MyAxOCAzNiAxOEMzMS41ODE3IDE4IDI4IDIxLjU4MTcgMjggMjZDMjggMzAuNDE4MyAzMS41ODE3IDM0IDM2IDM0WiIgZmlsbD0id2hpdGUiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfNDhfNDgiIHgxPSIyNCIgeTE9IjAiIHgyPSIyNCIgeTI9IjQ4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc2NEJBMiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg=='">
+                                    @if($item->foto_profil_path && file_exists(storage_path('app/public/'.$item->foto_profil_path)))
+                                        <img src="{{ asset('storage/'.$item->foto_profil_path) }}" 
+                                             alt="{{ $item->nama }}" 
+                                             class="img-fluid rounded-circle"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="avatar-placeholder" style="display: none;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
                                     @else
                                         <div class="avatar-placeholder">
                                             <i class="fas fa-user"></i>
@@ -142,12 +147,15 @@
                                        class="btn btn-warning btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="button" class="btn btn-danger btn-sm delete-btn" 
-                                            title="Hapus"
-                                            data-id="{{ $item->id }}"
-                                            data-name="{{ $item->nama }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <form action="{{ route('wargas.destroy', $item->warga_id) }}" 
+                                          method="POST" style="display:inline;" 
+                                          onsubmit="return confirm('Yakin hapus warga {{ $item->nama }}?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -187,38 +195,7 @@
         @endif
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Konfirmasi Hapus
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menghapus data warga:</p>
-                    <p class="fw-bold" id="delete-item-name"></p>
-                    <p class="text-danger"><small>Aksi ini tidak dapat dibatalkan!</small></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Batal
-                    </button>
-                    <form id="delete-form" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash me-1"></i>Hapus
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+
 @stop
 
 @section('css')
@@ -719,16 +696,7 @@
             $('.alert').alert('close');
         }, 5000);
         
-        // Delete confirmation modal
-        $('.delete-btn').on('click', function() {
-            const id = $(this).data('id');
-            const name = $(this).data('name');
-            const formAction = "{{ route('wargas.destroy', ':id') }}".replace(':id', id);
-            
-            $('#delete-item-name').text(name);
-            $('#delete-form').attr('action', formAction);
-            $('#deleteModal').modal('show');
-        });
+
         
         // Pagination loading animation
         $(document).on('click', '.custom-pagination a', function(e) {

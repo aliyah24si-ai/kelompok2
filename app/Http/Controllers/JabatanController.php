@@ -13,26 +13,26 @@ class JabatanController extends Controller
     {
         $query = Jabatan::with('lembaga');
         
-        // Search by nama jabatan
-        if ($request->has('search') && $request->search != '') {
-            $query->where('nama_jabatan', 'like', '%' . $request->search . '%');
+        // Search functionality - improved
+        if ($request->filled('q')) {
+            $searchTerm = $request->q;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_jabatan', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('lembaga', function ($lembagaQuery) use ($searchTerm) {
+                      $lembagaQuery->where('nama_lembaga', 'like', '%' . $searchTerm . '%');
+                  });
+            });
         }
         
         // Filter by lembaga
-        if ($request->has('lembaga_id') && $request->lembaga_id != '') {
+        if ($request->filled('lembaga_id')) {
             $query->where('lembaga_id', $request->lembaga_id);
         }
         
-        // Filter by level
-        if ($request->has('level') && $request->level != '') {
-            $query->where('level', $request->level);
-        }
+        $jabatans = $query->latest()->paginate(5);
+        $lembagas = LembagaDesa::select('lembaga_id', 'nama_lembaga')->orderBy('nama_lembaga')->get();
         
-        $jabatans = $query->paginate(5);
-        $lembagas = LembagaDesa::all();
-        
-        return view('jabatan.index', compact('jabatans', 'lembagas'))
-            ->with('success', session('success'));
+        return view('jabatan.index', compact('jabatans', 'lembagas'));
     }
 
     

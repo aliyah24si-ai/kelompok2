@@ -1,3 +1,7 @@
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
+
 @extends('adminlte::page')
 
 @section('title', 'Detail Warga')
@@ -12,7 +16,19 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body text-center">
                     <div class="detail-avatar mx-auto mb-3">
-                        <img src="{{ asset('storage/'.$warga->foto_profil_path) }}" alt="{{ $warga->nama }}" class="img-fluid rounded-circle">
+                        @if($warga->foto_profil_path && file_exists(storage_path('app/public/'.$warga->foto_profil_path)))
+                            <img src="{{ asset('storage/'.$warga->foto_profil_path) }}" 
+                                 alt="{{ $warga->nama }}" 
+                                 class="img-fluid rounded-circle"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="avatar-placeholder" style="display: none;">
+                                <i class="fas fa-user fa-3x"></i>
+                            </div>
+                        @else
+                            <div class="avatar-placeholder">
+                                <i class="fas fa-user fa-3x"></i>
+                            </div>
+                        @endif
                     </div>
                     <h4 class="fw-bold mb-1">{{ $warga->nama }}</h4>
                     <p class="text-muted mb-0">{{ $warga->pekerjaan }}</p>
@@ -34,6 +50,16 @@
                     @if($fileCount > 0)
                         <ul class="list-group list-group-flush">
                             @foreach($files as $file)
+                                @php
+                                    // Gunakan accessor file_url dari model yang sudah diperbaiki
+                                    $currentFileUrl = $file->file_url ?? '#';
+                                    
+                                    // Double check untuk memastikan URL valid
+                                    if ($currentFileUrl === '#' || empty($currentFileUrl)) {
+                                        $currentFileUrl = '#';
+                                    }
+                                @endphp
+                                
                                 <li class="list-group-item d-flex justify-content-between flex-wrap align-items-center document-item">
                                     <div class="flex-grow-1">
                                         <i class="fas fa-file-alt me-2 text-primary"></i>
@@ -47,8 +73,8 @@
                                                 title="Lihat Dokumen">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        @if($file->file_url)
-                                            <a href="{{ $file->file_url }}" class="btn btn-sm btn-outline-success ms-2" 
+                                        @if($currentFileUrl && $currentFileUrl !== '#')
+                                            <a href="{{ $currentFileUrl }}" class="btn btn-sm btn-outline-success ms-2" 
                                                target="_blank" title="Download">
                                                 <i class="fas fa-download"></i>
                                             </a>
@@ -71,34 +97,57 @@
                                                 @php
                                                     $fileName = $file->original_name ?? '';
                                                     $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                                                    $fileUrl = $file->file_url ?? asset('storage/' . ($file->file_path ?? ''));
                                                     $imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                                                    
+                                                    // Gunakan URL yang sudah digenerate di atas
+                                                    $modalFileUrl = $currentFileUrl;
                                                 @endphp
                                                 
-                                                @if(in_array($ext, $imageExts) && $fileUrl)
-                                                    <img src="{{ $fileUrl }}" alt="{{ $fileName }}" class="img-fluid doc-preview" 
-                                                         style="max-height: 500px; width: 100%; object-fit: contain;">
-                                                @elseif($ext === 'pdf' && $fileUrl)
-                                                    <iframe src="{{ $fileUrl }}" style="width: 100%; height: 500px; border: none; border-radius: 10px;"></iframe>
-                                                @else
-                                                    <div class="text-center py-5">
-                                                        <i class="fas fa-file fa-5x text-muted mb-3"></i>
-                                                        <p class="text-muted">
-                                                            File tipe <strong>{{ $ext ? strtoupper($ext) : 'Unknown' }}</strong> 
-                                                            tidak dapat ditampilkan dalam preview.
-                                                        </p>
-                                                        @if($fileUrl)
-                                                            <a href="{{ $fileUrl }}" class="btn btn-primary btn-sm" target="_blank">
+                                                @if($modalFileUrl && $modalFileUrl !== '#')
+                                                    @if(in_array($ext, $imageExts))
+                                                        <img src="{{ $modalFileUrl }}" alt="{{ $fileName }}" class="img-fluid doc-preview" 
+                                                             style="max-height: 500px; width: 100%; object-fit: contain;"
+                                                             onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                                        <div class="text-center py-5" style="display: none;">
+                                                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                                            <p class="text-muted">Gambar tidak dapat dimuat</p>
+                                                        </div>
+                                                    @elseif($ext === 'pdf')
+                                                        <iframe src="{{ $modalFileUrl }}" style="width: 100%; height: 500px; border: none; border-radius: 10px;"
+                                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+                                                        <div class="text-center py-5" style="display: none;">
+                                                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                                            <p class="text-muted">PDF tidak dapat dimuat dalam preview</p>
+                                                            <a href="{{ $modalFileUrl }}" class="btn btn-primary btn-sm" target="_blank">
+                                                                <i class="fas fa-download me-2"></i>Download PDF
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <div class="text-center py-5">
+                                                            <i class="fas fa-file fa-5x text-muted mb-3"></i>
+                                                            <p class="text-muted">
+                                                                File tipe <strong>{{ $ext ? strtoupper($ext) : 'Unknown' }}</strong> 
+                                                                tidak dapat ditampilkan dalam preview.
+                                                            </p>
+                                                            <a href="{{ $modalFileUrl }}" class="btn btn-primary btn-sm" target="_blank">
                                                                 <i class="fas fa-download me-2"></i>Download File
                                                             </a>
-                                                        @endif
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    <div class="text-center py-5">
+                                                        <i class="fas fa-exclamation-circle fa-5x text-danger mb-3"></i>
+                                                        <p class="text-danger">
+                                                            <strong>File tidak ditemukan!</strong>
+                                                        </p>
+                                                        <p class="text-muted">File mungkin telah dipindahkan atau dihapus.</p>
                                                     </div>
                                                 @endif
                                             </div>
                                             <div class="modal-footer doc-modal-footer">
                                                 <p class="text-muted mb-0 me-auto"><small>Ukuran: {{ $file->readable_size ?? '0 B' }}</small></p>
-                                                @if($fileUrl)
-                                                    <a href="{{ $fileUrl }}" class="btn btn-primary doc-download-btn" target="_blank">
+                                                @if($modalFileUrl && $modalFileUrl !== '#')
+                                                    <a href="{{ $modalFileUrl }}" class="btn btn-primary doc-download-btn" target="_blank">
                                                         <i class="fas fa-download me-2"></i>Download
                                                     </a>
                                                 @endif
@@ -225,6 +274,17 @@
 
     .detail-avatar:hover img {
         transform: scale(1.1) !important;
+    }
+
+    .detail-avatar .avatar-placeholder {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: linear-gradient(135deg, var(--purple-light) 0%, var(--purple) 100%) !important;
+        color: white !important;
+        font-size: 3rem !important;
     }
 
     /* ===== BADGE ===== */

@@ -4,7 +4,16 @@
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1 class="m-0 text-dark"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</h1>
+        <div class="d-flex align-items-center">
+            <!-- Logo Simple di Kiri -->
+            @if(file_exists(public_path('images/logo-perangkat-lembaga.png')))
+                <img src="{{ asset('images/logo-perangkat-lembaga.png') }}" 
+                     alt="Logo Perangkat Lembaga" 
+                     class="header-logo me-3"
+                     onerror="this.style.display='none';">
+            @endif
+            <h1> </i>Dashboard</h1>
+        </div>
         <div class="text-muted">
             <i class="fas fa-calendar-alt mr-1"></i> {{ date('d F Y') }}
             <span class="mx-2">|</span>
@@ -120,6 +129,101 @@
                 </div>
                 <div class="card-footer">
                     <a href="{{ route('perangkat_desa.index') }}" class="footer-link">
+                        <i class="fas fa-external-link-alt"></i> Lihat Detail
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-5">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h6 class="stat-title">TOTAL RT</h6>
+                        <h3 class="stat-value">{{ $totalRt ?? 0 }}</h3>
+                        <div class="stat-trend">
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                            <span class="text-muted">Rukun Tetangga</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ route('rt.index') }}" class="footer-link">
+                        <i class="fas fa-external-link-alt"></i> Lihat Detail
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-6">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h6 class="stat-title">TOTAL RW</h6>
+                        <h3 class="stat-value">{{ $totalRw ?? 0 }}</h3>
+                        <div class="stat-trend">
+                            <i class="fas fa-map text-success"></i>
+                            <span class="text-muted">Rukun Warga</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ route('rw.index') }}" class="footer-link">
+                        <i class="fas fa-external-link-alt"></i> Lihat Detail
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-7">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-tag"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h6 class="stat-title">TOTAL JABATAN</h6>
+                        <h3 class="stat-value">{{ $totalJabatan ?? 0 }}</h3>
+                        <div class="stat-trend">
+                            <i class="fas fa-award text-warning"></i>
+                            <span class="text-muted">Posisi jabatan</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ route('jabatan.index') }}" class="footer-link">
+                        <i class="fas fa-external-link-alt"></i> Lihat Detail
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-8">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h6 class="stat-title">ANGGOTA LEMBAGA</h6>
+                        <h3 class="stat-value">{{ $totalAnggotaLembaga ?? 0 }}</h3>
+                        <div class="stat-trend">
+                            <i class="fas fa-user-friends text-info"></i>
+                            <span class="text-muted">Anggota aktif</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ route('anggota-lembaga.index') }}" class="footer-link">
                         <i class="fas fa-external-link-alt"></i> Lihat Detail
                     </a>
                 </div>
@@ -334,6 +438,30 @@
 
 @section('css')
 <style>
+    /* ==================== HEADER LOGO ==================== */
+    .header-logo {
+        height: 40px;
+        width: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        background: white;
+        padding: 4px;
+    }
+    
+    .header-logo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    /* Responsive header logo */
+    @media (max-width: 768px) {
+        .header-logo {
+            height: 32px;
+            padding: 3px;
+        }
+    }
+
     /* ==================== DASHBOARD WELCOME ==================== */
     .dashboard-welcome {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -410,6 +538,10 @@
     .card-2 { border-top: 4px solid #10b981; }
     .card-3 { border-top: 4px solid #f59e0b; }
     .card-4 { border-top: 4px solid #ef4444; }
+    .card-5 { border-top: 4px solid #8b5cf6; }
+    .card-6 { border-top: 4px solid #06b6d4; }
+    .card-7 { border-top: 4px solid #f97316; }
+    .card-8 { border-top: 4px solid #ec4899; }
     
     .stat-card .card-body {
         padding: 25px;
